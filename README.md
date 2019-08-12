@@ -65,6 +65,57 @@ You'll learn more about these by checking their files out.
 * Radians to Degrees
 * Angle in Range (degrees given with other degree values as limiters)
 
+## How to use
+Copy Resources (remove README files), sce_sys, src and CMakeLists.txt
+
+### GameHandler
+In "src", you will find GameHandler.h and GameHandler.cpp.
+This is where your "access" starts, here you'll find:
+
+```cpp
+// GameHandler.h
+
+void Update(float elapsedSec);
+void Draw() const;
+
+void ProcessKeyUpEvent(const PSV_ButtonEvent& bEvent);
+void ProcessKeyDownEvent(const PSV_ButtonEvent& bEvent);
+void ProcessKeyHeldEvent(const PSV_ButtonEvent& bEvent);
+
+void ProcessJoystickMotionEvent(const PSV_JoystickEvent& jEvent);
+
+void ProcessTouchpadDownEvent(const PSV_TouchpadEvent& tpEvent);
+void ProcessTouchpadUpEvent(const PSV_TouchpadEvent& tpEvent);
+void ProcessTouchpadMotionEvent(const PSV_TouchpadEvent& tpEvent);
+void ProcessTouchpadSwipeEvent(const PSV_TouchpadEvent& tpEvent);
+	
+void Initialize();
+void Cleanup();
+```
+These are the functions you'll be using (and the constructor/destructor).
+
+#### Draw
+This function is used to Draw/Render your shapes, textures, ...
+
+#### Update
+Want to update a position by using the execution time/elapsed sec? (0.016~ when running at 60~ FPS)
+Here is where you can do exactly that.
+(For example moving a shape at a specific velocity with the elapsed seconds to move it inside boundaries)
+
+#### Process...Event
+These functions are where the events come in.
+These are called when their event triggers (this is done behind code inside Core / PSV).
+
+You dont have to check when the event should trigger, you can just use the events (parameter) data and start checking things out!
+
+#### Initialize and Cleanup
+These functions are called in the constructor and destructor respectively.
+You don't have to work in the constructor or destructor as you can use these aswell.
+
+#### Is this the only file I can work in?
+
+No! You can create your own class, copy the necessary functions from GameHandler.h and call those inside GameHandler (by creating an object of your class inside GameHandler constructor)
+
 ## Wiki
 A wiki will be in the works soon that should include better information than this README and should be more clear.
 
