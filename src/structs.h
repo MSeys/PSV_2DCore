@@ -46,28 +46,6 @@ struct Rectf
 
 };
 
-
-struct Color4f
-{
-	Color4f( );
-	explicit Color4f( float r, float g, float b, float a );
-	
-	float r;
-	float g;
-	float b;
-	float a;
-};
-
-struct Color3
-{
-	Color3();
-	explicit Color3(int r, int g, int b);
-
-	int r;
-	int g;
-	int b;
-};
-
 struct Color4
 {
 	Color4();

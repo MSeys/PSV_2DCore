@@ -8,15 +8,10 @@
 
 float GetTimeNow()
 {
-	return float(sceKernelGetProcessTimeWide()) / 1000000.0;
+	return float(sceKernelGetProcessTimeWide()) / 1000000.f;
 }
 
 #pragma region DrawFunctionality
-std::string ColorToString(const Color3& color)
-{
-	return std::to_string(color.r) + "," + std::to_string(color.g) + "," + std::to_string(color.b);
-}
-
 void DrawPoint(float x, float y, const Color4& color, float pointSize)
 {
 	sceGxmSetFrontPointLineWidth(_vita2d_context, pointSize);
@@ -415,4 +410,26 @@ float  DistPointLineSegment( const Point2f& p, const Point2f& a, const Point2f& 
 float DistanceBetweenPoints(const Point2f& p1, const Point2f& p2)
 {
 	return sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
+}
+
+float AngleBetweenPoints(const Point2f& p1, const Point2f& p2)
+{
+	return atan2(p1.y - p2.y, p2.x - p1.x);
+}
+
+float DegreesToRadians(float degrees)
+{
+	return degrees * (float(M_PI) / 180.f);
+}
+
+int RadiansToDegrees(float rad)
+{
+	int angle{ int(rad * (180.f / float(M_PI))) };
+	angle = (angle + 720) % 360;
+	return angle;
+}
+
+bool AngleInRange(int degrees, float init, float end)
+{
+	return (float(degrees) >= init) && (float(degrees) < end);
 }

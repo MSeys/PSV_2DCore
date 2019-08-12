@@ -4,10 +4,7 @@
 #include <vector>
 
 	float GetTimeNow();
-#pragma region DrawFunctionality
-
-	std::string ColorToString(const Color3& color);
-	
+#pragma region DrawFunctionality	
 	void DrawPoint(float x, float y, const Color4& color, float pointSize = 1.0f);
 	void DrawPoint(const Point2f& p, const Color4& color, float pointSize = 1.0f);
 
@@ -32,8 +29,10 @@
 	};
 
 	bool IsPointInRect(const Point2f& p, const Rectf& r);
+
 	bool IsPointInCircle(const Point2f& p, const Circlef& c);
 	bool IsPointInCircle(const Point2& p, const Circlef& c);
+
 	bool IsPointInPolygon( const Point2f& p, const std::vector<Point2f>& vertices );
 	bool IsPointInPolygon( const Point2f& p, const Point2f* vertices, size_t nrVertices );
 
@@ -45,6 +44,7 @@
 	bool IsOverlapping( const Circlef& c1, const Circlef& c2 );
 	bool IsOverlapping( const std::vector<Point2f>& vertices, const Circlef& c );
 	bool IsOverlapping( const Point2f* vertices, size_t nrVertices, const Circlef& c );
+
 	bool Raycast( const Point2f* vertices, const size_t nrVertices, const Point2f& rayP1, const Point2f& rayP2, HitInfo& hitInfo );
 	bool Raycast( const std::vector<Point2f>& vertices, const Point2f& rayP1, const Point2f& rayP2, HitInfo& hitInfo );
 
@@ -54,3 +54,8 @@
 #pragma endregion CollisionFunctionality
 
 	float DistanceBetweenPoints(const Point2f& p1, const Point2f& p2);
+
+	float AngleBetweenPoints(const Point2f& p1, const Point2f& p2);
+	float DegreesToRadians(float degrees);
+	int RadiansToDegrees(float rad);
+	bool AngleInRange(int degrees, float init, float end);

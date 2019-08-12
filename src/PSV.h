@@ -16,7 +16,7 @@ enum class PSV_JoystickType
 
 enum class PSV_JoystickDirection
 {
-	UP_LEFT, UP, UP_RIGHT, LEFT, RIGHT, DOWN_LEFT, DOWN, DOWN_RIGHT, MIDDLE
+	NW, N, NE, W, E, SW, S, SE, MIDDLE
 };
 
 enum class PSV_TouchpadType
@@ -26,12 +26,17 @@ enum class PSV_TouchpadType
 
 enum class PSV_TouchpadSwipeDirection
 {
-	UP, DOWN, LEFT, RIGHT
+	UP, DOWN, LEFT, RIGHT, NONE
 };
 
 enum PSV_EventType
 {
 	PSV_NONE, PSV_KEYDOWN, PSV_KEYUP, PSV_KEYHELD, PSV_JOYSTICKMOTION, PSV_TOUCHPAD_DOWN, PSV_TOUCHPAD_UP, PSV_TOUCHPAD_MOTION, PSV_TOUCHPAD_SWIPE
+};
+
+enum PSV_TouchSamplingMode
+{
+	PSV_TOUCH_MOTION, PSV_TOUCH_SWIPE
 };
 #pragma endregion Enums
 
@@ -47,16 +52,23 @@ struct PSV_JoystickEvent
 	PSV_JoystickDirection joyDirection;
 	float xValue;
 	float yValue;
+
+	int angleDegrees;
+	float angleRad;
 };
 
 struct PSV_TouchpadEvent
 {
 	PSV_TouchpadType touchpadType;
 
-	Point2 startTouch;
-	Point2 endTouch;
+	Point2f startTouch;
+	Point2f endTouch;
 
 	int touchNum;
+	float angleRad;
+	int angleDegrees;
+
+	float velocity;
 
 	PSV_TouchpadSwipeDirection touchpadSwipeDirection;
 };
@@ -112,17 +124,20 @@ struct PSV_Touchpad
 private:
 	PSV_TouchpadType touchpadType;
 
-	bool isPressed;
-	bool isReleased;
-
-	float press_time;
+	float press_time{};
 	
-	Point2 startTouch;
-	Point2 endTouch;
+	bool isPressed{};
+	bool isReleased{};
+	
+	Point2f startTouch;
+	Point2f endTouch;
 	
 public:
 	PSV_Touchpad(const PSV_TouchpadType& touchpadType);
 	PSV_Event Update(SceTouchData* touch, SceTouchData* touchOld);
+
+private:
+	PSV_TouchpadSwipeDirection GetDirection(int angle);
 };
 #pragma endregion PSV Touchpad
 
@@ -130,6 +145,7 @@ extern std::unordered_map<PSV_ButtonType, PSV_Button> PSV_Buttons;
 extern std::unordered_map<PSV_JoystickType, PSV_Joystick> PSV_Joysticks;
 extern std::unordered_map<PSV_TouchpadType, PSV_Touchpad> PSV_Touchpads;
 extern std::queue<PSV_Event> PSV_EventsQueue;
+extern PSV_TouchSamplingMode PSV_TSMode;
 
 #pragma region PSV String Vectors
 extern std::vector<std::string> PSV_ButtonStrings;
@@ -141,4 +157,5 @@ extern std::vector<std::string> PSV_JoystickTypeStrings;
 void PSV_Init();
 void PSV_Update(SceCtrlData& pad, SceTouchData* touch, SceTouchData* touchOld);
 int PSV_PollEvent(PSV_Event& e);
+void PSV_SetTouchSamplingMode(const PSV_TouchSamplingMode& psvTouchSamplingMode);
 #pragma endregion PSV Functions

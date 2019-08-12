@@ -1,7 +1,6 @@
 #include "PSV.h"
 #define PSV_HOLD_TIME 0.4 
-#define PSV_JOY_LOW_DZ 110
-#define PSV_JOY_HIGH_DZ 150
+#define PSV_JOY_THRESHOLD 40
 
 std::vector<std::string> PSV_ButtonStrings
 {
@@ -13,8 +12,7 @@ std::vector<std::string> PSV_ButtonStrings
 
 std::vector<std::string> PSV_JoystickDirectionStrings
 {
-	"UP_LEFT", "UP", "UP_RIGHT", "LEFT",
-	"RIGHT", "DOWN_LEFT", "DOWN", "DOWN_RIGHT", "MIDDLE"
+	"North West", "North", "North East", "West", "East", "South West", "South", "South East", "Middle"
 };
 
 std::vector<std::string> PSV_JoystickTypeStrings
@@ -26,7 +24,7 @@ std::unordered_map<PSV_ButtonType, PSV_Button> PSV_Buttons;
 std::unordered_map<PSV_JoystickType, PSV_Joystick> PSV_Joysticks;
 std::unordered_map<PSV_TouchpadType, PSV_Touchpad> PSV_Touchpads;
 std::queue<PSV_Event> PSV_EventsQueue;
-
+PSV_TouchSamplingMode PSV_TSMode{ PSV_TOUCH_MOTION };
 
 
 
@@ -121,140 +119,91 @@ PSV_Event PSV_Joystick::Update(SceCtrlData& pad)
 {
 	PSV_Event e{};
 	const PSV_JoystickDirection previousDirection{ joyDirection };
+
+	const Point2f center{ 128.f, 128.f };
+	Point2f joyPos{};
+
+	if(joyType == PSV_JoystickType::LSTICK)
+	{
+		joyPos = Point2f{ float(pad.lx), float(pad.ly) };	
+	}
+
+	else
+	{
+		joyPos = Point2f{ float(pad.rx), float(pad.ry) };
+	}
+
+	float angleRad = AngleBetweenPoints(center, joyPos);
+	const int angleDegrees = RadiansToDegrees(angleRad);
+
+	// Radian angle correction
+	if (angleRad < 0)
+	{
+		angleRad += M_PI * 2;
+	}
 	
-	if (joyType == PSV_JoystickType::LSTICK)
+
+	if(DistanceBetweenPoints(center, joyPos) > PSV_JOY_THRESHOLD)
 	{
-		// Middle
-		if ((pad.lx > PSV_JOY_LOW_DZ && pad.lx < PSV_JOY_HIGH_DZ) && (pad.ly > PSV_JOY_LOW_DZ && pad.ly < PSV_JOY_HIGH_DZ) && joyDirection != PSV_JoystickDirection::MIDDLE)
+		// EAST
+		if ((AngleInRange(angleDegrees, 0, 22.5) || AngleInRange(angleDegrees, 337.5, 360)) && joyDirection != PSV_JoystickDirection::E)
 		{
-			joyDirection = PSV_JoystickDirection::MIDDLE;
+			joyDirection = PSV_JoystickDirection::E;
+		}
+		
+		// NORTH EAST
+		if(AngleInRange(angleDegrees, 22.5, 67.5) && joyDirection != PSV_JoystickDirection::NE)
+		{
+			joyDirection = PSV_JoystickDirection::NE;
 		}
 
-		// UP LEFT
-		if (pad.lx == 0 && pad.ly < 50 && joyDirection != PSV_JoystickDirection::UP_LEFT)
+		// NORTH
+		if (AngleInRange(angleDegrees, 67.5, 112.5) && joyDirection != PSV_JoystickDirection::N)
 		{
-			joyDirection = PSV_JoystickDirection::UP_LEFT;
+			joyDirection = PSV_JoystickDirection::N;
 		}
 
-		// UP MIDDLE
-		if (pad.lx < PSV_JOY_LOW_DZ && pad.ly == 0 && joyDirection != PSV_JoystickDirection::UP)
+		// NORTH WEST
+		if (AngleInRange(angleDegrees, 112.5, 157.5) && joyDirection != PSV_JoystickDirection::NW)
 		{
-			joyDirection = PSV_JoystickDirection::UP;
+			joyDirection = PSV_JoystickDirection::NW;
 		}
 
-		// UP RIGHT
-		if (pad.lx == 255 && pad.ly < PSV_JOY_LOW_DZ && joyDirection != PSV_JoystickDirection::UP_RIGHT)
+		// WEST
+		if (AngleInRange(angleDegrees, 157.5, 202.5) && joyDirection != PSV_JoystickDirection::W)
 		{
-			joyDirection = PSV_JoystickDirection::UP_RIGHT;
+			joyDirection = PSV_JoystickDirection::W;
 		}
 
-		// RIGHT
-		if (pad.lx == 255 && pad.ly > PSV_JOY_LOW_DZ && pad.ly < PSV_JOY_HIGH_DZ && joyDirection != PSV_JoystickDirection::RIGHT)
+		// SOUTH WEST
+		if (AngleInRange(angleDegrees, 202.5, 247.5) && joyDirection != PSV_JoystickDirection::SW)
 		{
-			joyDirection = PSV_JoystickDirection::RIGHT;
+			joyDirection = PSV_JoystickDirection::SW;
 		}
 
-		// DOWN RIGHT
-		if (pad.lx == 255 && pad.ly > PSV_JOY_HIGH_DZ && joyDirection != PSV_JoystickDirection::DOWN_RIGHT)
+		// SOUTH
+		if (AngleInRange(angleDegrees, 247.5, 292.5) && joyDirection != PSV_JoystickDirection::S)
 		{
-			joyDirection = PSV_JoystickDirection::DOWN_RIGHT;
+			joyDirection = PSV_JoystickDirection::S;
 		}
 
-		// DOWN
-		if (pad.lx > PSV_JOY_LOW_DZ && pad.lx < PSV_JOY_HIGH_DZ && pad.ly == 255 && joyDirection != PSV_JoystickDirection::DOWN)
+		// SOUTH EAST
+		if (AngleInRange(angleDegrees, 292.5, 337.5) && joyDirection != PSV_JoystickDirection::SE)
 		{
-			joyDirection = PSV_JoystickDirection::DOWN;
-		}
-
-		// DOWN LEFT
-		if (pad.lx < PSV_JOY_LOW_DZ && pad.ly == 255 && joyDirection != PSV_JoystickDirection::DOWN_LEFT)
-		{
-			joyDirection = PSV_JoystickDirection::DOWN_LEFT;
-		}
-
-		// LEFT
-		if (pad.lx == 0 && pad.ly > PSV_JOY_LOW_DZ && pad.ly < PSV_JOY_HIGH_DZ && joyDirection != PSV_JoystickDirection::LEFT)
-		{
-			joyDirection = PSV_JoystickDirection::LEFT;
+			joyDirection = PSV_JoystickDirection::SE;
 		}
 	}
 
-	else if (joyType == PSV_JoystickType::RSTICK)
+	else
 	{
-		// Middle
-		if ((pad.rx > PSV_JOY_LOW_DZ && pad.rx < PSV_JOY_HIGH_DZ) && (pad.ry > PSV_JOY_LOW_DZ && pad.ry < PSV_JOY_HIGH_DZ) && joyDirection != PSV_JoystickDirection::MIDDLE)
-		{
-			joyDirection = PSV_JoystickDirection::MIDDLE;
-		}
-
-		// UP LEFT
-		if (pad.rx == 0 && pad.ry < 50 && joyDirection != PSV_JoystickDirection::UP_LEFT)
-		{
-			joyDirection = PSV_JoystickDirection::UP_LEFT;
-		}
-
-		// UP MIDDLE
-		if (pad.rx < PSV_JOY_LOW_DZ && pad.ry == 0 && joyDirection != PSV_JoystickDirection::UP)
-		{
-			joyDirection = PSV_JoystickDirection::UP;
-		}
-
-		// UP RIGHT
-		if (pad.rx == 255 && pad.ry < PSV_JOY_LOW_DZ && joyDirection != PSV_JoystickDirection::UP_RIGHT)
-		{
-			joyDirection = PSV_JoystickDirection::UP_RIGHT;
-		}
-
-		// RIGHT
-		if (pad.rx == 255 && pad.ry > PSV_JOY_LOW_DZ && pad.ry < PSV_JOY_HIGH_DZ && joyDirection != PSV_JoystickDirection::RIGHT)
-		{
-			joyDirection = PSV_JoystickDirection::RIGHT;
-		}
-
-		// DOWN RIGHT
-		if (pad.rx == 255 && pad.ry > PSV_JOY_HIGH_DZ && joyDirection != PSV_JoystickDirection::DOWN_RIGHT)
-		{
-			joyDirection = PSV_JoystickDirection::DOWN_RIGHT;
-		}
-
-		// DOWN
-		if (pad.rx > PSV_JOY_LOW_DZ && pad.rx < PSV_JOY_HIGH_DZ && pad.ry == 255 && joyDirection != PSV_JoystickDirection::DOWN)
-		{
-			joyDirection = PSV_JoystickDirection::DOWN;
-		}
-
-		// DOWN LEFT
-		if (pad.rx < PSV_JOY_LOW_DZ && pad.ry == 255 && joyDirection != PSV_JoystickDirection::DOWN_LEFT)
-		{
-			joyDirection = PSV_JoystickDirection::DOWN_LEFT;
-		}
-
-		// LEFT
-		if (pad.rx == 0 && pad.ry > PSV_JOY_LOW_DZ && pad.ry < PSV_JOY_HIGH_DZ && joyDirection != PSV_JoystickDirection::LEFT)
-		{
-			joyDirection = PSV_JoystickDirection::LEFT;
-		}
+		joyDirection = PSV_JoystickDirection::MIDDLE;
 	}
 
+	// Final event check
 	if(previousDirection != joyDirection)
 	{
-		float xValue;
-		float yValue;
-
-		if(joyType == PSV_JoystickType::LSTICK)
-		{
-			xValue = pad.lx;
-			yValue = pad.ly;
-		}
-
-		else
-		{
-			xValue = pad.rx;
-			yValue = pad.ry;
-		}
-
 		e.eType = PSV_JOYSTICKMOTION;
-		e.jEvent = PSV_JoystickEvent{ joyType, joyDirection, xValue, yValue };
+		e.jEvent = PSV_JoystickEvent{ joyType, joyDirection, joyPos.x, joyPos.y, angleDegrees, angleRad };
 	}
 
 	else
@@ -274,61 +223,113 @@ PSV_Touchpad::PSV_Touchpad(const PSV_TouchpadType& touchpadType)
 
 PSV_Event PSV_Touchpad::Update(SceTouchData* touch, SceTouchData* touchOld)
 {
-	PSV_Event e{};
+	PSV_Event e{ PSV_NONE };
 	PSV_TouchpadEvent tpEvent{ touchpadType };
 	
 	isReleased = false;
-	
+
+	// if pressed or motion
 	if (touch[int(touchpadType)].reportNum > 0)
 	{
 		isReleased = false;
 
 		if (!isPressed)
-		{
+		{			
 			isPressed = true;
 
+			press_time = GetTimeNow();
+			
 			const int reportNum = int(touch[int(touchpadType)].reportNum);
-			startTouch = Point2{ touch[int(touchpadType)].report[reportNum - 1].x / 2,  touch[int(touchpadType)].report[reportNum - 1].y / 2 };
+			startTouch = Point2f{ float(touch[int(touchpadType)].report[reportNum - 1].x) / 2.f,  float(touch[int(touchpadType)].report[reportNum - 1].y) / 2.f };
 			
 			tpEvent.startTouch = startTouch;
-			tpEvent.touchNum = reportNum;
 			
 			e.eType = PSV_TOUCHPAD_DOWN;
-			e.tpEvent = tpEvent;
-			return e;
 		}
 
-		// motion
+		// MOTION 
+		else if(PSV_TSMode == PSV_TOUCH_MOTION)
+		{
+			e.eType = PSV_TOUCHPAD_MOTION;
+		}
+
 		const int reportNum = int(touch[int(touchpadType)].reportNum);
-		endTouch = Point2{ touch[int(touchpadType)].report[reportNum - 1].x / 2,  touch[int(touchpadType)].report[reportNum - 1].y / 2 };
+		endTouch = Point2f{ float(touch[int(touchpadType)].report[reportNum - 1].x) / 2.f,  float(touch[int(touchpadType)].report[reportNum - 1].y) / 2.f };
 
 		tpEvent.endTouch = endTouch;
 		tpEvent.touchNum = reportNum;
 
-		e.eType = PSV_TOUCHPAD_MOTION;
 		e.tpEvent = tpEvent;
 		return e;
 	}
 
+
+	// if not pressed anymore but isPressed is true
 	if (isPressed)
-	{
+	{	
 		isReleased = true;
 	}
 
 	isPressed = false;
 
+	// release - swipe or normal release
 	if (isReleased)
 	{
 		const int reportNum = int(touch[int(touchpadType)].reportNum);
-		const Point2 endTouch{ touch[int(touchpadType)].report[reportNum - 1].x / 2,  touch[int(touchpadType)].report[reportNum - 1].y / 2 };
-		
+
 		tpEvent.endTouch = endTouch;
 		tpEvent.touchNum = reportNum;
-		
+
+		if (PSV_TSMode == PSV_TOUCH_SWIPE)
+		{
+			tpEvent.angleRad = AngleBetweenPoints(startTouch, endTouch);
+			tpEvent.angleDegrees = RadiansToDegrees(tpEvent.angleRad);
+			tpEvent.velocity = DistanceBetweenPoints(startTouch, endTouch) / (GetTimeNow() - press_time);
+
+			// Radian angle correction
+			if(tpEvent.angleRad < 0)
+			{
+				tpEvent.angleRad += M_PI * 2;
+			}
+
+			const PSV_TouchpadSwipeDirection direction{ GetDirection(tpEvent.angleDegrees) };
+
+			if(direction != PSV_TouchpadSwipeDirection::NONE)
+			{
+				tpEvent.touchpadSwipeDirection = direction;
+				e.eType = PSV_TOUCHPAD_SWIPE;
+				e.tpEvent = tpEvent;
+				return e;
+			}
+		}
+
 		e.eType = PSV_TOUCHPAD_UP;
 		e.tpEvent = tpEvent;
 		return e;
 	}
+
+	return e;
+}
+
+PSV_TouchpadSwipeDirection PSV_Touchpad::GetDirection(int angle)
+{
+	if (AngleInRange(angle, 45, 135)) 
+	{
+		return PSV_TouchpadSwipeDirection::UP;
+	}
+	
+	if (AngleInRange(angle, 0, 45) || AngleInRange(angle, 315, 360))
+	{
+		return PSV_TouchpadSwipeDirection::RIGHT;
+	}
+	
+	if (AngleInRange(angle, 225, 315))
+	{
+		return PSV_TouchpadSwipeDirection::DOWN;
+	}
+
+	return PSV_TouchpadSwipeDirection::LEFT;
+
 }
 #pragma endregion PSV Touchpad
 
@@ -387,5 +388,10 @@ int PSV_PollEvent(PSV_Event& e)
 	}
 	
 	return 0;
+}
+
+void PSV_SetTouchSamplingMode(const PSV_TouchSamplingMode& psvTouchSamplingMode)
+{
+	PSV_TSMode = psvTouchSamplingMode;
 }
 #pragma endregion PSV Functions

@@ -3,11 +3,6 @@
 
 class GameHandler
 {
-	std::string m_KeyboardValue;
-	std::vector<vita2d_color_vertex> m_Vector;
-
-	bool m_MoveCircle;
-	Circlef m_Circle;
 	
 public:
 	GameHandler();
