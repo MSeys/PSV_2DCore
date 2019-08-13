@@ -4,10 +4,10 @@
 
 std::vector<std::string> PSV_ButtonStrings
 {
-	"CROSS", "CIRCLE", "SQUARE", "TRIANGLE",
-	"LTRIGGER", "RTRIGGER",
-	"UP", "DOWN", "LEFT", "RIGHT",
-	"START", "SELECT"
+	"Cross", "Circle", "Square", "Triangle",
+	"L-Trigger", "R-Trigger",
+	"D-Pad Up", "D-Pad Down", "D-Pad Left", "D-Pad Right",
+	"Start", "Select"
 };
 
 std::vector<std::string> PSV_JoystickDirectionStrings
@@ -17,7 +17,7 @@ std::vector<std::string> PSV_JoystickDirectionStrings
 
 std::vector<std::string> PSV_JoystickTypeStrings
 {
-	"LSTICK", "RSTICK"
+	"L-Stick", "R-Stick"
 };
 
 std::unordered_map<PSV_ButtonType, PSV_Button> PSV_Buttons;
@@ -111,7 +111,7 @@ bool PSV_Button::IsReleased() const
 #pragma region PSV Joystick
 PSV_Joystick::PSV_Joystick(const PSV_JoystickType& joystickType)
 	: joyType(joystickType)
-	, joyDirection(PSV_JoystickDirection::MIDDLE)
+	, joyDirection(MIDDLE)
 {
 }
 
@@ -123,7 +123,7 @@ PSV_Event PSV_Joystick::Update(SceCtrlData& pad)
 	const Point2f center{ 128.f, 128.f };
 	Point2f joyPos{};
 
-	if(joyType == PSV_JoystickType::LSTICK)
+	if(joyType == LSTICK)
 	{
 		joyPos = Point2f{ float(pad.lx), float(pad.ly) };	
 	}
@@ -146,57 +146,57 @@ PSV_Event PSV_Joystick::Update(SceCtrlData& pad)
 	if(DistanceBetweenPoints(center, joyPos) > PSV_JOY_THRESHOLD)
 	{
 		// EAST
-		if ((AngleInRange(angleDegrees, 0, 22.5) || AngleInRange(angleDegrees, 337.5, 360)) && joyDirection != PSV_JoystickDirection::E)
+		if ((AngleInRange(angleDegrees, 0, 22.5) || AngleInRange(angleDegrees, 337.5, 360)) && joyDirection != E)
 		{
-			joyDirection = PSV_JoystickDirection::E;
+			joyDirection = E;
 		}
 		
 		// NORTH EAST
-		if(AngleInRange(angleDegrees, 22.5, 67.5) && joyDirection != PSV_JoystickDirection::NE)
+		if(AngleInRange(angleDegrees, 22.5, 67.5) && joyDirection != NE)
 		{
-			joyDirection = PSV_JoystickDirection::NE;
+			joyDirection = NE;
 		}
 
 		// NORTH
-		if (AngleInRange(angleDegrees, 67.5, 112.5) && joyDirection != PSV_JoystickDirection::N)
+		if (AngleInRange(angleDegrees, 67.5, 112.5) && joyDirection != N)
 		{
-			joyDirection = PSV_JoystickDirection::N;
+			joyDirection = N;
 		}
 
 		// NORTH WEST
-		if (AngleInRange(angleDegrees, 112.5, 157.5) && joyDirection != PSV_JoystickDirection::NW)
+		if (AngleInRange(angleDegrees, 112.5, 157.5) && joyDirection != NW)
 		{
-			joyDirection = PSV_JoystickDirection::NW;
+			joyDirection = NW;
 		}
 
 		// WEST
-		if (AngleInRange(angleDegrees, 157.5, 202.5) && joyDirection != PSV_JoystickDirection::W)
+		if (AngleInRange(angleDegrees, 157.5, 202.5) && joyDirection != W)
 		{
-			joyDirection = PSV_JoystickDirection::W;
+			joyDirection = W;
 		}
 
 		// SOUTH WEST
-		if (AngleInRange(angleDegrees, 202.5, 247.5) && joyDirection != PSV_JoystickDirection::SW)
+		if (AngleInRange(angleDegrees, 202.5, 247.5) && joyDirection != SW)
 		{
-			joyDirection = PSV_JoystickDirection::SW;
+			joyDirection = SW;
 		}
 
 		// SOUTH
-		if (AngleInRange(angleDegrees, 247.5, 292.5) && joyDirection != PSV_JoystickDirection::S)
+		if (AngleInRange(angleDegrees, 247.5, 292.5) && joyDirection != S)
 		{
-			joyDirection = PSV_JoystickDirection::S;
+			joyDirection = S;
 		}
 
 		// SOUTH EAST
-		if (AngleInRange(angleDegrees, 292.5, 337.5) && joyDirection != PSV_JoystickDirection::SE)
+		if (AngleInRange(angleDegrees, 292.5, 337.5) && joyDirection != SE)
 		{
-			joyDirection = PSV_JoystickDirection::SE;
+			joyDirection = SE;
 		}
 	}
 
 	else
 	{
-		joyDirection = PSV_JoystickDirection::MIDDLE;
+		joyDirection = MIDDLE;
 	}
 
 	// Final event check
@@ -294,13 +294,10 @@ PSV_Event PSV_Touchpad::Update(SceTouchData* touch, SceTouchData* touchOld)
 
 			const PSV_TouchpadSwipeDirection direction{ GetDirection(tpEvent.angleDegrees) };
 
-			if(direction != PSV_TouchpadSwipeDirection::NONE)
-			{
-				tpEvent.touchpadSwipeDirection = direction;
-				e.eType = PSV_TOUCHPAD_SWIPE;
-				e.tpEvent = tpEvent;
-				return e;
-			}
+			tpEvent.touchpadSwipeDirection = direction;
+			e.eType = PSV_TOUCHPAD_SWIPE;
+			e.tpEvent = tpEvent;
+			return e;
 		}
 
 		e.eType = PSV_TOUCHPAD_UP;
@@ -315,20 +312,20 @@ PSV_TouchpadSwipeDirection PSV_Touchpad::GetDirection(int angle)
 {
 	if (AngleInRange(angle, 45, 135)) 
 	{
-		return PSV_TouchpadSwipeDirection::UP;
+		return SWIPE_UP;
 	}
 	
 	if (AngleInRange(angle, 0, 45) || AngleInRange(angle, 315, 360))
 	{
-		return PSV_TouchpadSwipeDirection::RIGHT;
+		return SWIPE_RIGHT;
 	}
 	
 	if (AngleInRange(angle, 225, 315))
 	{
-		return PSV_TouchpadSwipeDirection::DOWN;
+		return SWIPE_DOWN;
 	}
 
-	return PSV_TouchpadSwipeDirection::LEFT;
+	return SWIPE_LEFT;
 
 }
 #pragma endregion PSV Touchpad
@@ -336,28 +333,28 @@ PSV_TouchpadSwipeDirection PSV_Touchpad::GetDirection(int angle)
 #pragma region PSV Functions
 void PSV_Init()
 {
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{PSV_ButtonType::CROSS, PSV_Button{ SCE_CTRL_CROSS, PSV_ButtonType::CROSS } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{PSV_ButtonType::CIRCLE, PSV_Button{ SCE_CTRL_CIRCLE, PSV_ButtonType::CIRCLE } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{PSV_ButtonType::SQUARE, PSV_Button{ SCE_CTRL_SQUARE, PSV_ButtonType::SQUARE } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{PSV_ButtonType::TRIANGLE, PSV_Button{ SCE_CTRL_TRIANGLE, PSV_ButtonType::TRIANGLE } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{CROSS, PSV_Button{ SCE_CTRL_CROSS, CROSS } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{CIRCLE, PSV_Button{ SCE_CTRL_CIRCLE, CIRCLE } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{SQUARE, PSV_Button{ SCE_CTRL_SQUARE, SQUARE } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{TRIANGLE, PSV_Button{ SCE_CTRL_TRIANGLE, TRIANGLE } });
 
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::LTRIGGER, PSV_Button{ SCE_CTRL_LTRIGGER, PSV_ButtonType::LTRIGGER } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::RTRIGGER, PSV_Button{ SCE_CTRL_RTRIGGER, PSV_ButtonType::RTRIGGER } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ LTRIGGER, PSV_Button{ SCE_CTRL_LTRIGGER, LTRIGGER } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ RTRIGGER, PSV_Button{ SCE_CTRL_RTRIGGER, RTRIGGER } });
 
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::UP, PSV_Button{ SCE_CTRL_UP, PSV_ButtonType::UP } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::DOWN, PSV_Button{ SCE_CTRL_DOWN, PSV_ButtonType::DOWN } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::LEFT, PSV_Button{ SCE_CTRL_LEFT, PSV_ButtonType::LEFT } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::RIGHT, PSV_Button{ SCE_CTRL_RIGHT, PSV_ButtonType::RIGHT } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ DPAD_UP, PSV_Button{ SCE_CTRL_UP, DPAD_UP } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ DPAD_DOWN, PSV_Button{ SCE_CTRL_DOWN, DPAD_DOWN } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ DPAD_LEFT, PSV_Button{ SCE_CTRL_LEFT, DPAD_LEFT } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ DPAD_RIGHT, PSV_Button{ SCE_CTRL_RIGHT, DPAD_RIGHT } });
 
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::START, PSV_Button{ SCE_CTRL_START, PSV_ButtonType::START } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::SELECT, PSV_Button{ SCE_CTRL_SELECT, PSV_ButtonType::SELECT } });
-	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ PSV_ButtonType::SELECT, PSV_Button{ SCE_CTRL_SELECT, PSV_ButtonType::SELECT } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ START, PSV_Button{ SCE_CTRL_START, START } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ SELECT, PSV_Button{ SCE_CTRL_SELECT, SELECT } });
+	PSV_Buttons.insert(std::pair<PSV_ButtonType, PSV_Button>{ SELECT, PSV_Button{ SCE_CTRL_SELECT, SELECT } });
 
-	PSV_Joysticks.insert(std::pair<PSV_JoystickType, PSV_Joystick>{ PSV_JoystickType::LSTICK, PSV_Joystick{ PSV_JoystickType::LSTICK } });
-	PSV_Joysticks.insert(std::pair<PSV_JoystickType, PSV_Joystick>{ PSV_JoystickType::RSTICK, PSV_Joystick{ PSV_JoystickType::RSTICK } });
+	PSV_Joysticks.insert(std::pair<PSV_JoystickType, PSV_Joystick>{ LSTICK, PSV_Joystick{ LSTICK } });
+	PSV_Joysticks.insert(std::pair<PSV_JoystickType, PSV_Joystick>{ RSTICK, PSV_Joystick{ RSTICK } });
 
-	PSV_Touchpads.insert(std::pair<PSV_TouchpadType, PSV_Touchpad>{ PSV_TouchpadType::FRONT, PSV_Touchpad{ PSV_TouchpadType::FRONT }});
-	PSV_Touchpads.insert(std::pair<PSV_TouchpadType, PSV_Touchpad>{ PSV_TouchpadType::BACK, PSV_Touchpad{ PSV_TouchpadType::BACK }});
+	PSV_Touchpads.insert(std::pair<PSV_TouchpadType, PSV_Touchpad>{ FRONT, PSV_Touchpad{ FRONT }});
+	PSV_Touchpads.insert(std::pair<PSV_TouchpadType, PSV_Touchpad>{ BACK, PSV_Touchpad{ BACK }});
 }
 
 void PSV_Update(SceCtrlData& pad, SceTouchData* touch, SceTouchData* touchOld)

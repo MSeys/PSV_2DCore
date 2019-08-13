@@ -4,29 +4,29 @@
 #include <unordered_map>
 
 #pragma region Enums
-enum class PSV_ButtonType
+enum PSV_ButtonType
 {
-	CROSS, CIRCLE, SQUARE, TRIANGLE, LTRIGGER, RTRIGGER, UP, DOWN, LEFT, RIGHT, START, SELECT
+	CROSS, CIRCLE, SQUARE, TRIANGLE, LTRIGGER, RTRIGGER, DPAD_UP, DPAD_DOWN, DPAD_LEFT, DPAD_RIGHT, START, SELECT
 };
 
-enum class PSV_JoystickType
+enum PSV_JoystickType
 {
 	LSTICK, RSTICK
 };
 
-enum class PSV_JoystickDirection
+enum PSV_JoystickDirection
 {
 	NW, N, NE, W, E, SW, S, SE, MIDDLE
 };
 
-enum class PSV_TouchpadType
+enum PSV_TouchpadType
 {
 	FRONT, BACK
 };
 
-enum class PSV_TouchpadSwipeDirection
+enum PSV_TouchpadSwipeDirection
 {
-	UP, DOWN, LEFT, RIGHT, NONE
+	SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT
 };
 
 enum PSV_EventType
