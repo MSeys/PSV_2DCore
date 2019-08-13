@@ -15,6 +15,7 @@ Font::~Font()
 
 void Font::Draw(const Point2f& pos, const Color4& color, int size, const std::string& text, const TextLocation& location) const
 {
+	const int offset{ 3 };
 	const int width{ GetWidth(text, size) };
 	const int height{ GetHeight(text, size) };
 
@@ -25,7 +26,7 @@ void Font::Draw(const Point2f& pos, const Color4& color, int size, const std::st
 		break;
 
 	case MID_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x, pos.y + height / 2.f, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, pos.x, pos.y + height / 2.f - offset, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
 		break;
 
 	case TOP_LEFT:
@@ -37,7 +38,7 @@ void Font::Draw(const Point2f& pos, const Color4& color, int size, const std::st
 		break;
 
 	case MID_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width / 2.f, pos.y + height / 2.f, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, pos.x - width / 2.f, pos.y + height / 2.f - offset, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
 		break;
 
 	case TOP_CENTER:
@@ -49,7 +50,7 @@ void Font::Draw(const Point2f& pos, const Color4& color, int size, const std::st
 		break;
 
 	case MID_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width, pos.y + height / 2.f, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, pos.x - width, pos.y + height / 2.f - offset, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
 		break;
 
 	case TOP_RIGHT:
