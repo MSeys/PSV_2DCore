@@ -5,9 +5,6 @@
 
 	float GetTimeNow();
 #pragma region DrawFunctionality	
-	void DrawPoint(float x, float y, const Color4& color, float pointSize = 1.0f);
-	void DrawPoint(const Point2f& p, const Color4& color, float pointSize = 1.0f);
-
 	void DrawLine(float x1, float y1, float x2, float y2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
 	void DrawLine(const Point2f& p1, const Point2f& p2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
 	void DrawLine(const Point2& p1, const Point2& p2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);

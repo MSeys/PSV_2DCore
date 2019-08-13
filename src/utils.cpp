@@ -12,22 +12,10 @@ float GetTimeNow()
 }
 
 #pragma region DrawFunctionality
-void DrawPoint(float x, float y, const Color4& color, float pointSize)
-{
-	sceGxmSetFrontPointLineWidth(_vita2d_context, pointSize);
-	sceGxmSetBackPointLineWidth(_vita2d_context, pointSize);
-	vita2d_draw_pixel(x, y, RGBA8(color.r, color.g, color.b, color.a));
-}
-
-void DrawPoint(const Point2f& p, const Color4& color, float pointSize)
-{
-	DrawPoint(p.x, p.y, color, pointSize);
-}
-
 void DrawLine(float x1, float y1, float x2, float y2, const Color4& color, float lineWidth)
 {
-	sceGxmSetFrontPointLineWidth(_vita2d_context, lineWidth);
-	sceGxmSetBackPointLineWidth(_vita2d_context, lineWidth);
+	sceGxmSetFrontPointLineWidth(_vita2d_context, int(lineWidth));
+	sceGxmSetBackPointLineWidth(_vita2d_context, int(lineWidth));
 	vita2d_draw_line(x1, y1, x2, y2, RGBA8(color.r, color.g, color.b, color.a));
 }
 
