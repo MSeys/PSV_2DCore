@@ -36,7 +36,6 @@ These handle the objects:
 You'll learn more about these by checking their files out.
 
 ### Drawing functionality (built on vita2d)
-* Draw Point (changeable point size)
 * Draw Line (changeable line thickness)
 * Draw Rectangle
 * Fill Rectangle
