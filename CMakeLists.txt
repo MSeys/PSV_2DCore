@@ -53,12 +53,16 @@ add_executable(${PROJECT_NAME}
   src/main.cpp
   src/pch.cpp
   src/pch.h
+  src/vita2d_extended.cpp
+  src/vita2d_extended.h
   src/structs.cpp
   src/structs.h
   src/utils.cpp
   src/utils.h
-  src/PSV.cpp
-  src/PSV.h
+  src/PSV_Core.cpp
+  src/PSV_Core.h
+  src/PSV_Utils.cpp
+  src/PSV_Utils.h
   src/Vector2f.cpp
   src/Vector2f.h
   src/Texture.cpp
