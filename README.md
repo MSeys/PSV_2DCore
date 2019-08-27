@@ -1,5 +1,5 @@
 # PSV_2DCore
-### **Version 1.0 (Released August 12 - 2019)**
+### **Version 1.1 (Released August 27 - 2019)**
 
 ## Functionality
 ### PSV
@@ -15,13 +15,24 @@
 
 #### PSV Functions (used by user)
 
-The user is only needed to use:
+**Setting the Touch sampling mode**
 ```cpp 
 void PSV_SetTouchSamplingMode(const PSV_TouchSamplingMode& psvTouchSamplingMode);
 ```
 
 You can switch between checking motion or swiping using this function.
 This is the only PSV function that should be called by the user as the others are called inside the Core.
+
+**Using PSV Transformations**
+```cpp
+void PSV_Begin();
+void PSV_Translate(float x, float y);
+void PSV_Scale(float x, float y);
+void PSV_End();
+```
+
+These functions can be used to transform your entire screen / camera / window, these apply on shapes, text/font and textures.
+While they are in V1.1, they are NOT finished and require improvement to be able to have transformations inside transformations, currently they act standalone!
 
 ### Bank (Textures, Fonts, SFX, Music)
 The bank is a special class that handles the files found in a folder structures pre-defined in pch.cpp.
