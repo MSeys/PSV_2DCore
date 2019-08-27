@@ -12,20 +12,7 @@ Texture::~Texture()
 	m_pVitaTexture = nullptr;
 }
 
-void Texture::Draw(const Point2f& pos, const Rectf& srcRect, const Scale2f& scale) const
-{
-	Rectf trueSrcRect{ srcRect };
-	// full texture
-	if(srcRect.width == 0 || srcRect.height == 0)
-	{
-		trueSrcRect.width = GetWidth();
-		trueSrcRect.height = GetHeight();
-	}
-
-	vita2d_draw_texture_part_scale(m_pVitaTexture, pos.x, pos.y, trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height, scale.x, scale.y);
-}
-
-void Texture::Draw(const Point2& pos, const Rectf& srcRect, const Scale2f& scale) const
+void Texture::Draw(const Point2f& pos, const Rectf& srcRect, const Scale2f& scales, float angle, const Point2f& hotspot) const
 {
 	Rectf trueSrcRect{ srcRect };
 	// full texture
@@ -35,33 +22,74 @@ void Texture::Draw(const Point2& pos, const Rectf& srcRect, const Scale2f& scale
 		trueSrcRect.height = GetHeight();
 	}
 
-	vita2d_draw_texture_part_scale(m_pVitaTexture, pos.x, pos.y, trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height, scale.x, scale.y);
-}
-
-void Texture::DrawRotation(const Point2f& pos, const Rectf& srcRect, const Scale2f& scale, float rad) const
-{
-	Rectf trueSrcRect{ srcRect };
-	// full texture
-	if (srcRect.width == 0 || srcRect.height == 0)
+	if(PSV_Allowed)
 	{
-		trueSrcRect.width = GetWidth();
-		trueSrcRect.height = GetHeight();
+		if(angle != 0)
+		{
+			if(hotspot.x != -1 && hotspot.y != -1)
+			{
+				vita2d_draw_texture_part_scale_rotate_hotspot(m_pVitaTexture,
+					GetTransformedPoint(pos).x, GetTransformedPoint(pos).y,
+					trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height,
+					PSV_Scales[PSV_CT].x * scales.x, PSV_Scales[PSV_CT].y * scales.y,
+					angle, hotspot.x, hotspot.y);
+			}
+
+			else
+			{
+				vita2d_draw_texture_part_scale_rotate(m_pVitaTexture, 
+					GetTransformedPoint(pos).x, GetTransformedPoint(pos).y,
+					trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height,
+					PSV_Scales[PSV_CT].x * scales.x, PSV_Scales[PSV_CT].y * scales.y, 
+					angle);
+			}
+		}
+
+		else
+		{
+			vita2d_draw_texture_part_scale(m_pVitaTexture, 
+				GetTransformedPoint(pos).x, GetTransformedPoint(pos).y,
+				trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height,
+				PSV_Scales[PSV_CT].x * scales.x, PSV_Scales[PSV_CT].y * scales.y);
+		}
 	}
 
-	vita2d_draw_texture_part_scale_rotate(m_pVitaTexture, pos.x, pos.y, trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height, scale.x, scale.y, rad);
+	else
+	{
+		if (angle != 0)
+		{
+			if (hotspot.x != 0.01 && hotspot.y != 0.01)
+			{
+				vita2d_draw_texture_part_scale_rotate_hotspot(m_pVitaTexture,
+					pos.x, pos.y,
+					trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height,
+					scales.x, scales.y,
+					angle, hotspot.x, hotspot.y);
+			}
+
+			else
+			{
+				vita2d_draw_texture_part_scale_rotate(m_pVitaTexture,
+					pos.x, pos.y,
+					trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height,
+					scales.x, scales.y,
+					angle);
+			}
+		}
+
+		else
+		{
+			vita2d_draw_texture_part_scale(m_pVitaTexture, pos.x, pos.y,
+				trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height,
+				scales.x, scales.y);
+		}
+	}
 }
 
-void Texture::DrawRotation(const Point2& pos, const Rectf& srcRect, const Scale2f& scale, float rad) const
+void Texture::Draw(const Point2f& pos, float angle, const Point2f& hotspot, const Rectf& srcRect,
+	const Scale2f& scales) const
 {
-	Rectf trueSrcRect{ srcRect };
-	// full texture
-	if (srcRect.width == 0 || srcRect.height == 0)
-	{
-		trueSrcRect.width = GetWidth();
-		trueSrcRect.height = GetHeight();
-	}
-
-	vita2d_draw_texture_part_scale_rotate(m_pVitaTexture, pos.x, pos.y, trueSrcRect.left, trueSrcRect.bottom, trueSrcRect.width, trueSrcRect.height, scale.x, scale.y, rad);
+	Draw(pos, srcRect, scales, angle, hotspot);
 }
 
 float Texture::GetWidth() const

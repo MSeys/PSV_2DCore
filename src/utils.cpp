@@ -11,31 +11,64 @@ float GetTimeNow()
 	return float(sceKernelGetProcessTimeWide()) / 1000000.f;
 }
 
+int GetRandomInteger(int min, int max)
+{
+	return rand() % (max - min + 1) + min;
+}
+
+float GetRandomFloat(float min, float max)
+{
+	return min + static_cast<float>(rand()) / static_cast<float>(RAND_MAX / (max - min + 1));
+}
+
 #pragma region DrawFunctionality
 void DrawLine(float x1, float y1, float x2, float y2, const Color4& color, float lineWidth)
 {
-	sceGxmSetFrontPointLineWidth(_vita2d_context, int(lineWidth));
-	sceGxmSetBackPointLineWidth(_vita2d_context, int(lineWidth));
-	vita2d_draw_line(x1, y1, x2, y2, RGBA8(color.r, color.g, color.b, color.a));
+	DrawLine(Point2f{ x1, y1 }, Point2f{ x2, y2 }, color, lineWidth);
 }
 
 void DrawLine(const Point2f& p1, const Point2f& p2, const Color4& color, float lineWidth)
 {
-	DrawLine(p1.x, p1.y, p2.x, p2.y, color, lineWidth);
+	const Point2f trueP1{ (PSV_Allowed ? GetTransformedPoint(p1) : p1) };
+	const Point2f trueP2{ (PSV_Allowed ? GetTransformedPoint(p2) : p2) };
+	
+	if (PSV_Allowed)
+	{
+		lineWidth *= (PSV_Scales[PSV_CT].x + PSV_Scales[PSV_CT].y) / 2;
+	}
+
+	sceGxmSetFrontPointLineWidth(_vita2d_context, int(lineWidth));
+	sceGxmSetBackPointLineWidth(_vita2d_context, int(lineWidth));
+
+	vita2d_draw_line(trueP1.x, trueP1.y, trueP2.x, trueP2.y, RGBA8(color.r, color.g, color.b, color.a));
 }
 
 void DrawLine(const Point2& p1, const Point2& p2, const Color4& color, float lineWidth)
 {
-	DrawLine(p1.x, p1.y, p2.x, p2.y, color, lineWidth);
+	DrawLine(float(p1.x), float(p1.y), float(p2.x), float(p2.y), color, lineWidth);
+}
+
+void DrawLine(const Linef& line, const Color4& color, float lineWidth)
+{
+	DrawLine(line.p1, line.p2, color, lineWidth);
 }
 
 void DrawRect(const Rectf& rect, const Color4& color, float lineWidth)
 {
-	const Point2f bottomLeft{ rect.left, rect.bottom }
-	, topLeft{ rect.left, rect.bottom + rect.height }
-	, bottomRight{ rect.left + rect.width, rect.bottom }
-	, topRight{ rect.left + rect.width, rect.bottom + rect.height };
+	Point2f bottomLeft { rect.left, rect.bottom },
+				topLeft { rect.left, rect.bottom + rect.height },
+				bottomRight { rect.left + rect.width, rect.bottom },
+				topRight { rect.left + rect.width, rect.bottom + rect.height };
 
+	if (PSV_Allowed)
+	{
+		lineWidth *= (PSV_Scales[PSV_CT].x + PSV_Scales[PSV_CT].y) / 2;
+		bottomLeft = GetTransformedPoint(bottomLeft);
+		topLeft = GetTransformedPoint(topLeft);
+		bottomRight = GetTransformedPoint(bottomRight);
+		topRight = GetTransformedPoint(topRight);
+	}
+	
 	DrawLine(bottomLeft, topLeft, color, lineWidth);
 	DrawLine(topLeft, topRight, color, lineWidth);
 	DrawLine(topRight, bottomRight, color, lineWidth);
@@ -44,12 +77,26 @@ void DrawRect(const Rectf& rect, const Color4& color, float lineWidth)
 
 void FillRect(const Rectf& rect, const Color4& color)
 {
-	vita2d_draw_rectangle(rect.left, rect.bottom, rect.width, rect.height, RGBA8(color.r, color.g, color.b, color.a));
+	Rectf trueRect{ rect };
+	if(PSV_Allowed)
+	{
+		trueRect = GetTransformedRectangle(trueRect);
+	}
+	
+	vita2d_draw_rectangle(trueRect.left, trueRect.bottom, trueRect.width, trueRect.height, RGBA8(color.r, color.g, color.b, color.a));
 }
 
 void FillCircle(float centerX, float centerY, float rad, const Color4& color)
 {
-	vita2d_draw_fill_circle(centerX, centerY, rad, RGBA8(color.r, color.g, color.b, color.a));
+	Point2f trueCenter{ centerX, centerY };
+
+	if(PSV_Allowed)
+	{
+		trueCenter = GetTransformedPoint(trueCenter);
+		rad *= (PSV_Scales[PSV_CT].x + PSV_Scales[PSV_CT].y) / 2;
+	}
+	
+	vita2d_draw_fill_circle(trueCenter.x, trueCenter.y, rad, RGBA8(color.r, color.g, color.b, color.a));
 }
 
 void FillCircle(const Circlef& circle, const Color4& color)
@@ -57,25 +104,23 @@ void FillCircle(const Circlef& circle, const Color4& color)
 	FillCircle(circle.center.x, circle.center.y, circle.radius, color);
 }
 
-void FillCircle( const Point2f& center, float rad, const Color4& color)
+void FillCircle(const Point2f& center, float rad, const Color4& color)
 {
-	FillCircle( center.x, center.y, rad, color);
+	FillCircle(center.x, center.y, rad, color);
 }
 #pragma endregion OpenGLDrawFunctionality
 
 #pragma region CollisionFunctionality
-
-bool IsPointInRect( const Point2f& p, const Rectf& r )
+bool IsPointInRect(const Point2f& p, const Rectf& r)
 {
-	return ( p.x >= r.left&& p.x <= r.left + r.width&&
-		p.y >= r.bottom&& p.y <= r.bottom + r.height );
+	return (p.x >= r.left && p.x <= r.left + r.width && p.y >= r.bottom&& p.y <= r.bottom + r.height);
 }
 
-bool IsPointInCircle( const Point2f& p, const Circlef& c )
+bool IsPointInCircle(const Point2f& p, const Circlef& c)
 {
-	float squaredDist = ( p.x - c.center.x )*( p.x - c.center.x ) + ( p.y - c.center.y ) * ( p.y - c.center.y );
+	float squaredDist = (p.x - c.center.x) * (p.x - c.center.x) + (p.y - c.center.y) * ( p.y - c.center.y );
 	float squaredRadius = c.radius * c.radius;
-	return ( squaredRadius >= squaredDist );
+	return (squaredRadius >= squaredDist);
 }
 
 bool IsPointInCircle(const Point2& p, const Circlef& c)
@@ -84,7 +129,6 @@ bool IsPointInCircle(const Point2& p, const Circlef& c)
 	float squaredRadius = c.radius * c.radius;
 	return (squaredRadius >= squaredDist);
 }
-
 
 bool IsOverlapping( const Point2f& a, const Point2f& b, const Rectf& r )
 {
@@ -285,6 +329,7 @@ bool IntersectLineSegments( const Point2f& p1, const Point2f& p2, const Point2f&
 	}
 	return intersecting;
 }
+
 bool Raycast( const std::vector<Point2f>& vertices, const Point2f& rayP1, const Point2f& rayP2, HitInfo& hitInfo )
 {
 	return Raycast( vertices.data( ), vertices.size( ), rayP1, rayP2, hitInfo );
@@ -349,7 +394,6 @@ bool Raycast( const Point2f* vertices, const size_t nrVertices, const Point2f& r
 		return first.lambda < last.lambda; } );
 	return true;
 }
-
 
 bool  IsPointOnLineSegment( const Point2f& p, const Point2f& a, const Point2f& b )
 {
@@ -421,3 +465,57 @@ bool AngleInRange(int degrees, float init, float end)
 {
 	return (float(degrees) >= init) && (float(degrees) < end);
 }
+
+#pragma region Transformation
+Point2f GetTransformedPoint(float x, float y)
+{
+	const Point2f p
+	{
+		(x + PSV_Translations[PSV_CT].x) * PSV_Scales[PSV_CT].x,
+		(y + PSV_Translations[PSV_CT].y) * PSV_Scales[PSV_CT].y
+	};
+
+	return p;
+}
+
+Point2f GetTransformedPoint(const Point2f& p)
+{
+	return GetTransformedPoint(p.x, p.y);
+}
+
+Rectf GetTransformedRectangle(float x, float y, float width, float height)
+{
+	return GetTransformedRectangle(Point2f{ x, y }, width, height);
+}
+
+Rectf GetTransformedRectangle(const Point2f& p, float width, float height)
+{
+	return Rectf{ GetTransformedPoint(p), width * PSV_Scales[PSV_CT].x, height * PSV_Scales[PSV_CT].y };
+}
+
+Rectf GetTransformedRectangle(const Rectf& r)
+{
+	return GetTransformedRectangle(r.left, r.bottom, r.width, r.height);
+}
+
+Circlef GetTransformedCircle(float centerX, float centerY, float rad)
+{
+	const Circlef transformedCircle
+	{
+		GetTransformedPoint(Point2f{ centerX, centerY }),
+		rad * ((PSV_Scales[PSV_CT].x + PSV_Scales[PSV_CT].y) / 2)
+	};
+	
+	return transformedCircle;
+}
+
+Circlef GetTransformedCircle(const Point2f& center, float rad)
+{
+	return GetTransformedCircle(center.x, center.y, rad);
+}
+
+Circlef GetTransformedCircle(const Circlef& circle)
+{
+	return GetTransformedCircle(circle.center, circle.radius);
+}
+#pragma endregion Transformation

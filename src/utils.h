@@ -4,10 +4,14 @@
 #include <vector>
 
 	float GetTimeNow();
+	int GetRandomInteger(int min, int max);
+	float GetRandomFloat(float min, float max);
+
 #pragma region DrawFunctionality	
 	void DrawLine(float x1, float y1, float x2, float y2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
 	void DrawLine(const Point2f& p1, const Point2f& p2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
 	void DrawLine(const Point2& p1, const Point2& p2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
+	void DrawLine(const Linef& line, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
 
 	void DrawRect(const Rectf& rect, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
 	void FillRect(const Rectf& rect, const Color4& color = Color4{ 255, 255, 255, 255 });
@@ -56,3 +60,16 @@
 	float DegreesToRadians(float degrees);
 	int RadiansToDegrees(float rad);
 	bool AngleInRange(int degrees, float init, float end);
+
+#pragma region Transformation
+	Point2f GetTransformedPoint(float x, float y);
+	Point2f GetTransformedPoint(const Point2f& p);
+
+	Rectf GetTransformedRectangle(float x, float y, float width, float height);
+	Rectf GetTransformedRectangle(const Point2f& p, float width, float height);
+	Rectf GetTransformedRectangle(const Rectf& r);
+
+	Circlef GetTransformedCircle(float centerX, float centerY, float rad);
+	Circlef GetTransformedCircle(const Point2f& center, float rad);
+	Circlef GetTransformedCircle(const Circlef& circle);
+#pragma endregion Transformation

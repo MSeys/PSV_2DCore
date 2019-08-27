@@ -1,11 +1,5 @@
 #include "GameHandler.h"
 
-// Necessary includes if you use the Bank (specified object)
-#include "Texture.h" // UI or Game Asset
-#include "Font.h" // Font
-#include "SFX.h" // SFX
-#include "Music.h" // Music
-
 GameHandler::GameHandler()
 {
 	Initialize();

@@ -15,46 +15,81 @@ Font::~Font()
 
 void Font::Draw(const Point2f& pos, const Color4& color, int size, const std::string& text, const TextLocation& location) const
 {
-	const int offset{ 3 };
+	Point2f truePos{ pos };
+	float offset{ 3.f };
+	
+	if (PSV_Allowed)
+	{
+		truePos = GetTransformedPoint(truePos);
+		size *= (PSV_Scales[PSV_CT].x + PSV_Scales[PSV_CT].y) / 2;
+		offset *= PSV_Scales[PSV_CT].y;
+	}
+	
 	const int width{ GetWidth(text, size) };
 	const int height{ GetHeight(text, size) };
 
 	switch(location)
 	{
 	case BOTTOM_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x, pos.y, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x, truePos.y,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case MID_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x, pos.y + height / 2.f - offset, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x, truePos.y + height / 2.f - offset,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case TOP_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x, pos.y + height, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x, truePos.y + height,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case BOTTOM_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width / 2.f, pos.y, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x - width / 2.f, truePos.y, RGBA8(color.r, color.g, color.b, color.a),
+			size, text.c_str());
 		break;
 
 	case MID_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width / 2.f, pos.y + height / 2.f - offset, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x - width / 2.f, truePos.y + height / 2.f - offset,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case TOP_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width / 2.f, pos.y + height, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x - width / 2.f, truePos.y + height,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case BOTTOM_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width, pos.y, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x - width, truePos.y,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case MID_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width, pos.y + height / 2.f - offset, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x - width, truePos.y + height / 2.f - offset,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 
 	case TOP_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, pos.x - width, pos.y + height, RGBA8(color.r, color.g, color.b, color.a), size, text.c_str());
+		vita2d_font_draw_text(m_pVitaFont, 
+			truePos.x - width, truePos.y + height,
+			RGBA8(color.r, color.g, color.b, color.a), 
+			size, text.c_str());
 		break;
 	}
 }

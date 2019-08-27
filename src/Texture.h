@@ -1,5 +1,5 @@
 #pragma once
-#include "pch.h"
+#include <vita2d.h>
 
 class Texture
 {
@@ -15,11 +15,15 @@ public:
 
 	~Texture();
 
-	void Draw(const Point2f& pos, const Rectf& srcRect = Rectf{ 0, 0, 0, 0 }, const Scale2f& scale = Scale2f{ 1, 1 }) const;
-	void Draw(const Point2& pos = Point2{ 0, 0 }, const Rectf& srcRect = Rectf{ 0, 0, 0, 0 }, const Scale2f& scale = Scale2f{ 1, 1 }) const;
+	void Draw(const Point2f& pos = Point2f{ 0, 0 }, 
+				const Rectf& srcRect = Rectf{ 0, 0, 0, 0 }, 
+				const Scale2f& scales = Scale2f{ 1, 1 }, 
+				float angle = 0.f, const Point2f& hotspot = Point2f{ -1, -1 }) const;
 
-	void DrawRotation(const Point2f& pos, const Rectf& srcRect = Rectf{ 0, 0, 0, 0 }, const Scale2f& scale = Scale2f{ 1, 1 }, float rad = 0.f) const;
-	void DrawRotation(const Point2& pos = Point2{ 0, 0 }, const Rectf& srcRect = Rectf{ 0, 0, 0, 0 }, const Scale2f& scale = Scale2f{ 1, 1 }, float rad = 0.f) const;
+	void Draw(const Point2f& pos,
+		float angle, const Point2f & hotspot = Point2f{ -1, -1 },
+		const Rectf& srcRect = Rectf{ 0, 0, 0, 0 },
+		const Scale2f& scales = Scale2f{ 1, 1 }) const;
 
 	float GetWidth() const;
 	float GetHeight() const;

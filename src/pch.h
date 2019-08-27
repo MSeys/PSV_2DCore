@@ -12,8 +12,7 @@
 #include "soloud_wav.h"
 #include "soloud_wavstream.h"
 
-#include <vita2d.h>
-
+#include "vita2d_extended.h"
 // C++ Includes
 #include <string>
 
@@ -22,7 +21,14 @@
 #include "Bank.h"
 #include "structs.h"
 #include "utils.h"
-#include "PSV.h"
+#include "PSV_Core.h"
+#include "PSV_Utils.h"
+
+// Object includes for Bank
+#include "Texture.h"
+#include "Font.h"
+#include "SFX.h"
+#include "Music.h"
 
 // Pi define
 #ifndef M_PI

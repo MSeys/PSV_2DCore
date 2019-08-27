@@ -124,3 +124,25 @@ Ellipsef::Ellipsef(float centerX, float centerY, float radiusX, float radiusY)
 	: Ellipsef{ Point2f{ centerX, centerY }, radiusX, radiusY }
 {
 }
+
+//-----------------------------------------------------------------
+// Linef Constructors
+//-----------------------------------------------------------------
+//
+Linef::Linef()
+	: p1{ 0, 0 }
+	, p2{ 0, 0 }
+{
+}
+
+Linef::Linef(float x1, float y1, float x2, float y2)
+	: p1{ x1, y1 }
+	, p2{ x2, y2 }
+{
+}
+
+Linef::Linef(Point2f p1, Point2f p2)
+	: p1{ p1 }
+	, p2{ p2 }
+{
+}

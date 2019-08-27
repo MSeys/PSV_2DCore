@@ -78,3 +78,13 @@ struct Ellipsef
 	float radiusX;
 	float radiusY;
 };
+
+struct Linef
+{
+	Linef();
+	explicit Linef(float x1, float y1, float x2, float y2);
+	explicit Linef(Point2f p1, Point2f p2);
+
+	Point2f p1;
+	Point2f p2;
+};
