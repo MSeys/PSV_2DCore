@@ -1,6 +1,5 @@
 #pragma once
-#include <vita2d.h>
-#include <string>
+#include "pch.h"
 
 struct Color4;
 struct Point2f;

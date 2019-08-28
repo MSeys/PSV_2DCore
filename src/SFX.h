@@ -10,6 +10,12 @@ class SFX
 
 public:
 	SFX(SoLoud::Soloud* pSoLoudEngine, const std::string& filePath);
+
+	SFX(const SFX& other) = delete;
+	SFX& operator=(const SFX& rhs) = delete;
+	SFX(const SFX&& other) = delete;
+	SFX& operator=(const SFX&& rhs) = delete;
+	
 	~SFX();
 
 	void Play() const;

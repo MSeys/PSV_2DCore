@@ -1,5 +1,7 @@
 #pragma once
-#include "pch.h"
+#include "soloud.h"
+#include "soloud_wavstream.h"
+#include <string>
 
 class Music
 {
@@ -10,6 +12,12 @@ class Music
 
 public:
 	Music(SoLoud::Soloud* pSoLoudEngine, const std::string& filePath);
+
+	Music(const Music& other) = delete;
+	Music& operator=(const Music& rhs) = delete;
+	Music(const Music&& other) = delete;
+	Music& operator=(const Music&& rhs) = delete;
+	
 	~Music();
 
 	void Play(bool isLooping) const;

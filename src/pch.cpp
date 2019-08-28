@@ -10,4 +10,3 @@ const std::string ASSETS_PATH{ "app0:/Resources/GameAssets" };
 const std::string FONTS_PATH{ "app0:/Resources/Fonts" };
 const std::string MUSIC_PATH{ "app0:/Resources/Audio/Music" };
 const std::string SFX_PATH{ "app0:/Resources/Audio/SFX" };
-const std::string DEFAULT_PATH{ "app0:/Resources/Default" };

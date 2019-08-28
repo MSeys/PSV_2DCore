@@ -1,11 +1,7 @@
 #include "Bank.h"
+#include "pch.h"
 
 #include <fstream>
-
-#include "Texture.h"
-#include "Font.h"
-#include "SFX.h"
-#include "Music.h"
 
 std::unordered_map<std::string, Texture*> Bank::m_AssetsMap;
 std::unordered_map<std::string, Texture*> Bank::m_UIMap;

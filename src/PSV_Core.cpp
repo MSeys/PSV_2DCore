@@ -1,4 +1,6 @@
 #include "PSV_Core.h"
+#include "PSV_Utils.h"
+
 #define PSV_HOLD_TIME 0.4
 #define PSV_JOY_THRESHOLD 40
 

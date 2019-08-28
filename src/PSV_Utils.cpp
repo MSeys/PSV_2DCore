@@ -24,8 +24,20 @@ void PSV_Begin()
 
 	PSV_CT++;
 
-	PSV_Scales.emplace_back(1, 1);
-	PSV_Translations.emplace_back(0, 0);
+	Scale2f scales{ 1, 1 };
+	Vector2f translations{ 0, 0 };
+	
+	for(int i{ 1 }; i < PSV_CT; i++)
+	{
+		scales.x *= PSV_Scales[i].x;
+		scales.y *= PSV_Scales[i].y;
+		
+		translations.x += PSV_Translations[i].x;
+		translations.y += PSV_Translations[i].y;
+	}
+	
+	PSV_Scales.push_back(scales);
+	PSV_Translations.push_back(translations);
 }
 
 void PSV_Translate(float x, float y)
@@ -35,7 +47,8 @@ void PSV_Translate(float x, float y)
 		return;
 	}
 
-	PSV_Translations[PSV_CT] = Vector2f{ x, y };
+	PSV_Translations[PSV_CT].x += x;
+	PSV_Translations[PSV_CT].y += y;
 }
 
 void PSV_Scale(float x, float y)
@@ -45,7 +58,8 @@ void PSV_Scale(float x, float y)
 		return;
 	}
 
-	PSV_Scales[PSV_CT] = Scale2f{ x, y };
+	PSV_Scales[PSV_CT].x *= x;
+	PSV_Scales[PSV_CT].y *= y;
 }
 
 void PSV_End()

@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Texture.h"
 
 Texture::Texture(const std::string& fileName)

@@ -1,11 +1,13 @@
 #pragma once
-#include "pch.h"
-#include <unordered_map>
 
-class SFX;
-class Music;
 class Texture;
 class Font;
+class Music;
+class SFX;
+
+
+#include <unordered_map>
+#include "soloud.h"
 
 class Bank
 {
