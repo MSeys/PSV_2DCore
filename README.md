@@ -147,6 +147,6 @@ Maybe send a small donation to let me know that you appreciate the work!
 
 [Paypal](https://www.paypal.me/mattseys)
 
-## Questions or help needed?
-Contact me on Discord. (Matthias#8282)
-Contact me on [Twitter](https://twitter.com/seys_matthias).
+# Questions or help needed?
+* Contact me on [Twitter](https://twitter.com/seys_matthias).
+* Join me on my [Discord](https://discord.gg/DHSRWnt)!
