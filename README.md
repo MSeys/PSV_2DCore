@@ -136,8 +136,16 @@ This will require EVERY sample to work however as you will be able to test them 
 
 [Samples](https://github.com/MSeys/PSV_2DCore_samples)
 
-## Libraries
+## Extra Libraries besides vitasdk
 * Vita2d
 * SoLoud
-* ...
-(They can be found in CMakeLists.txt)
+
+Be sure to check CMakeLists.text to know all dependencies.
+
+## Like what I do?
+Maybe send a small donation to let me know that you appreciate the work!
+
+[Paypal](https://www.paypal.me/mattseys)
+
+## Questions or help needed?
+Contact me on Discord. (Matthias#8282)
