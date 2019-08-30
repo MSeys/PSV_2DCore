@@ -4,7 +4,7 @@
 
 | Name                                     | Description                                                  | Header                               |
 | ---------------------------------------- | ------------------------------------------------------------ | ------------------------------------ |
-| \|--                                     | \|--                                                         | \|--                                 |
+| :---:                                    | :---                                                         | ---:                                 |
 | [PSV Core](Framework Core/PSV/Core.md)   | Event Handling.                                              | [PSV_Core.h](../../src/PSV_Core.h)   |
 | [PSV Utils](Framework Core/PSV/Utils.md) | Utility functions such as Transformations and setting PSV variables. | [PSV_Utils.h](../../src/PSV_Utils.h) |
 
