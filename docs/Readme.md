@@ -9,11 +9,11 @@ The Framework is not finished and will be extended all the time.
 ## Using the PSVita 2D Core Wiki
 
 * [Introduction](Start/Introduction.md)
-* * An introduction to the features in PSV_2DCore.
+  * An introduction to the features in PSV_2DCore.
 * [Source Code](Start/Source_Code.md)
-* * How to download the source code.
+  * How to download the source code.
 * [Installation](Start/Installation.md)
-* * How to use the framework.
+  * How to use the framework.
 * [Documentation](Documentation/Index.md)
-* * The official documentation for the Framework. Look here to find detailed information about the functions, structures, and enumerations.
+  * The official documentation for the Framework. Look here to find detailed information about the functions, structures, and enumerations.
 
