@@ -23,9 +23,9 @@ public:
 
 	~Font();
 
-	void Draw(const Point2f& pos, int size, const std::string& text, const TextLocation& location, const Color4& color) const;
-	void Draw(const Point2f& pos, int size, const std::string& text, const TextLocation& location = TOP_LEFT, const Color3& color = Color3{ 255, 255, 255 }, int transparency = 255) const;
-	
+	void Draw(const Point2f& pos, const Color4& color, int size, const std::string& text, const TextLocation& location) const;
+	void Draw(const Point2& pos, const Color4& color, int size, const std::string& text, const TextLocation& location) const;
+
 	int GetWidth(const std::string& text, int textSize) const;
 	int GetHeight(const std::string& text, int textSize) const;
 };
