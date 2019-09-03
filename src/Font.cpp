@@ -1,4 +1,20 @@
 #include "Font.h"
+#include <sstream>
+#include <regex>
+
+enum TextType
+{
+	Text, Icon
+};
+
+struct TextIcon
+{
+	TextType textType;
+	std::string text;
+	Point2f pos;
+	float width;
+	float scale;
+};
 
 Font::Font(const std::string& fileName)
 	  : m_pVitaFont(vita2d_load_font_file(fileName.c_str()))
@@ -11,90 +27,160 @@ Font::~Font()
 	m_pVitaFont = nullptr;
 }
 
-void Font::Draw(const Point2f& pos, const Color4& color, int size, const std::string& text, const TextLocation& location) const
+void Font::Draw(const Point2f& pos, int size, const std::string& text, const TextLocation& location, const Color4& color) const
 {
-	Point2f truePos{ pos };
-	float offset{ 3.f };
+	std::vector<std::string> compText = Split(text, "<>");
+	Point2f normPos{ pos };
+	Point2f transPos{ pos };
+	const int normSize{ size };
+	float centerOffset{ 3.f };
+	float textOffsetX;
+	float textOffsetY;
+	float iconOffsetX;
 	
 	if (PSV_Allowed)
 	{
-		truePos = GetTransformedPoint(truePos);
+		transPos = GetTransformedPoint(pos);
 		size *= (PSV_Scales[PSV_CT].x + PSV_Scales[PSV_CT].y) / 2;
-		offset *= PSV_Scales[PSV_CT].y;
+		centerOffset *= PSV_Scales[PSV_CT].y;
+	}
+
+	float width{};
+	float normWidth{};
+	const float height{ float(GetHeight(text, size)) };
+
+	// set width
+	for (const std::string& splitText : compText)
+	{
+		// is an icon
+		if (Bank::FindIcon(splitText))
+		{
+			const float iconScale{ float(size) / Bank::FindIcon(splitText)->GetWidth() };
+			const float normIconScale{ float(normSize) / Bank::FindIcon(splitText)->GetWidth() };
+			width += Bank::FindIcon(splitText)->GetWidth() * iconScale;
+			normWidth += Bank::FindIcon(splitText)->GetWidth() * normIconScale;
+		}
+
+		// is text
+		else
+		{
+			width += float(GetWidth(splitText, size));
+			normWidth += float(GetWidth(splitText, normSize));
+		}
 	}
 	
-	const int width{ GetWidth(text, size) };
-	const int height{ GetHeight(text, size) };
-
-	switch(location)
+	// set offsets
+	switch (location)
 	{
 	case BOTTOM_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x, truePos.y,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = 0;
+		textOffsetY = 0;
+		iconOffsetX = 0;
 		break;
 
 	case MID_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x, truePos.y + height / 2.f - offset,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = 0;
+		textOffsetY = height / 2.f - centerOffset;
+		iconOffsetX = 0;
 		break;
 
 	case TOP_LEFT:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x, truePos.y + height,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = 0;
+		textOffsetY = height;
+		iconOffsetX = 0;
 		break;
 
 	case BOTTOM_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x - width / 2.f, truePos.y, RGBA8(color.r, color.g, color.b, color.a),
-			size, text.c_str());
+		textOffsetX = -width / 2.f;
+		textOffsetY = 0;
+		iconOffsetX = -normWidth / 2.f;
 		break;
 
 	case MID_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x - width / 2.f, truePos.y + height / 2.f - offset,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = -width / 2.f;
+		textOffsetY = height / 2.f - centerOffset;
+		iconOffsetX = -normWidth / 2.f;
 		break;
 
 	case TOP_CENTER:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x - width / 2.f, truePos.y + height,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = -width / 2.f;
+		textOffsetY = height;
+		iconOffsetX = -normWidth / 2.f;
 		break;
 
 	case BOTTOM_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x - width, truePos.y,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = -width;
+		textOffsetY = 0;
+		iconOffsetX = -normWidth;
 		break;
 
 	case MID_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x - width, truePos.y + height / 2.f - offset,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = -width;
+		textOffsetY = height / 2.f - centerOffset;
+		iconOffsetX = -normWidth;
 		break;
 
 	case TOP_RIGHT:
-		vita2d_font_draw_text(m_pVitaFont, 
-			truePos.x - width, truePos.y + height,
-			RGBA8(color.r, color.g, color.b, color.a), 
-			size, text.c_str());
+		textOffsetX = -width;
+		textOffsetY = height;
+		iconOffsetX = -normWidth;
 		break;
+	}
+
+	for (const std::string& splitText : compText)
+	{
+		// is an icon
+		if (Bank::FindIcon(splitText))
+		{
+			const float iconScale{ float(size) / Bank::FindIcon(splitText)->GetWidth() };
+			const float normIconScale{ float(normSize) / Bank::FindIcon(splitText)->GetWidth() };
+			const float iconHeight{ Bank::FindIcon(splitText)->GetHeight() * normIconScale };
+			float iconOffsetY{};
+
+			switch (location)
+			{
+			case BOTTOM_LEFT:
+			case BOTTOM_CENTER:
+			case BOTTOM_RIGHT:
+				iconOffsetY = -iconHeight + centerOffset;
+				break;
+
+			case MID_LEFT:
+			case MID_CENTER:
+			case MID_RIGHT:
+				iconOffsetY = -(iconHeight / 2.f - centerOffset);
+				break;
+
+			case TOP_LEFT:
+			case TOP_CENTER:
+			case TOP_RIGHT:
+				iconOffsetY = centerOffset;
+				break;
+			}
+
+
+			Bank::FindIcon(splitText)->Draw(Point2f{ normPos.x + iconOffsetX, normPos.y + iconOffsetY + (size / 10) }, Rectf{ 0, 0, 0, 0 }, Scale2f{ normIconScale, normIconScale });
+			normPos.x += Bank::FindIcon(splitText)->GetWidth() * normIconScale;
+			transPos.x += Bank::FindIcon(splitText)->GetWidth() * iconScale;
+		}
+
+		// is text
+		else
+		{
+			vita2d_font_draw_text(m_pVitaFont,
+				int(transPos.x + textOffsetX), int(transPos.y + textOffsetY),
+				RGBA8(color.r, color.g, color.b, color.a),
+				size, splitText.c_str());
+			normPos.x += GetWidth(splitText, normSize);
+			transPos.x += GetWidth(splitText, size);
+		}
 	}
 }
 
-void Font::Draw(const Point2& pos, const Color4& color, int size, const std::string& text, const TextLocation& location) const
+void Font::Draw(const Point2f& pos, int size, const std::string& text, const TextLocation& location,
+	const Color3& color, int transparency) const
 {
-	Draw(Point2f{ float(pos.x), float(pos.y) }, color, size, text, location);
+	Draw(pos, size, text, location, Color4{ color, transparency });
 }
 
 int Font::GetWidth(const std::string& text, int textSize) const

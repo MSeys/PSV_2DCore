@@ -5,6 +5,7 @@
 
 std::unordered_map<std::string, Texture*> Bank::m_AssetsMap;
 std::unordered_map<std::string, Texture*> Bank::m_UIMap;
+std::unordered_map<std::string, Texture*> Bank::m_IconsMap;
 std::unordered_map<std::string, Font*> Bank::m_FontsMap;
 std::unordered_map<std::string, Music*> Bank::m_MusicMap;
 std::unordered_map<std::string, SFX*> Bank::m_SFXMap;
@@ -21,6 +22,7 @@ void Bank::InitializeBanks()
 	sceIoMkdir("ux0:/data/PSV_2DCore_Data", 0777);
 	InitializeAssetsMap(ASSETS_PATH);
 	InitializeUIMap(UI_PATH);
+	InitializeIconsMap(ICONS_PATH);
 	InitializeFontsMap(FONTS_PATH);
 	InitializeMusicMap(MUSIC_PATH);
 	InitializeSFXMap(SFX_PATH);
@@ -41,6 +43,16 @@ Texture* Bank::FindUI(const std::string& fileName)
 	if (m_UIMap.find(fileName) != m_UIMap.end())
 	{
 		return m_UIMap.find(fileName)->second;
+	}
+
+	return nullptr;
+}
+
+Texture* Bank::FindIcon(const std::string& fileName)
+{
+	if (m_IconsMap.find(fileName) != m_IconsMap.end())
+	{
+		return m_IconsMap.find(fileName)->second;
 	}
 
 	return nullptr;
@@ -128,8 +140,35 @@ void Bank::InitializeUIMap(const std::string& uiPath)
 				const std::string filePath{ uiPath + "/" + filename };
 				std::string formattedFilename{ filename.substr(0, filename.find('.')) };
 				m_UIMap[formattedFilename] = new Texture{ filePath };
+			}
+		}
+	}
 
-				
+	sceIoDclose(dfd);
+}
+
+void Bank::InitializeIconsMap(const std::string& iconsPath)
+{
+	const int dfd = sceIoDopen(iconsPath.c_str());
+
+	if (dfd > 0)
+	{
+		SceIoDirent file;
+
+		while (sceIoDread(dfd, &file) > 0)
+		{
+			if (SCE_S_ISDIR(file.d_stat.st_mode) != 0)
+			{
+				std::string newPath{ iconsPath + "/" + file.d_name };
+				InitializeIconsMap(newPath);
+			}
+
+			else
+			{
+				std::string filename{ file.d_name };
+				const std::string filePath{ iconsPath + "/" + filename };
+				std::string formattedFilename{ filename.substr(0, filename.find('.')) };
+				m_IconsMap[formattedFilename] = new Texture{ filePath };
 			}
 		}
 	}
@@ -233,6 +272,12 @@ Bank::~Bank()
 	}
 
 	for (std::pair<std::string, Texture*> pair : m_UIMap)
+	{
+		delete pair.second;
+		pair.second = nullptr;
+	}
+
+	for (std::pair<std::string, Texture*> pair : m_IconsMap)
 	{
 		delete pair.second;
 		pair.second = nullptr;

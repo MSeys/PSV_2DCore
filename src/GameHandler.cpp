@@ -16,7 +16,6 @@ void GameHandler::Update(float elapsedSec)
 
 void GameHandler::Draw() const
 {
-	
 }
 
 void GameHandler::ProcessKeyUpEvent(const PSV_ButtonEvent& bEvent)
