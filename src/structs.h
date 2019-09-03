@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-#include <vector>
-#include <psp2/ctrl.h>
 
 struct Point2f
 {
@@ -10,15 +8,6 @@ struct Point2f
 
 	float x;
 	float y;
-};
-
-struct Point2
-{
-	Point2();
-	explicit Point2(int x, int y);
-
-	int x;
-	int y;
 };
 
 struct Scale2f
@@ -30,13 +19,10 @@ struct Scale2f
 	float y;
 };
 
-
-
 struct Rectf
 {
 	Rectf( );
 	explicit Rectf(float left, float bottom, float width, float height);
-	explicit Rectf(Point2 pos, float width, float height);
 	explicit Rectf(Point2f pos, float width, float height);
 
 	float left;
@@ -46,9 +32,20 @@ struct Rectf
 
 };
 
+struct Color3
+{
+	Color3();
+	explicit Color3(int r, int g, int b);
+
+	int r;
+	int g;
+	int b;
+};
+
 struct Color4
 {
 	Color4();
+	explicit Color4(const Color3& color, int a);
 	explicit Color4(int r, int g, int b, int a);
 
 	int r;

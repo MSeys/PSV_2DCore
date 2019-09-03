@@ -22,6 +22,7 @@
 #include "Keyboard.h"
 #include "structs.h"
 #include "utils.h"
+#include "Colors.h"
 #include "PSV_Core.h"
 #include "PSV_Utils.h"
 
@@ -42,11 +43,10 @@ extern const int SCREEN_HEIGHT;
 // Resource paths
 extern const std::string UI_PATH;
 extern const std::string ASSETS_PATH;
+extern const std::string ICONS_PATH;
 extern const std::string FONTS_PATH;
 extern const std::string MUSIC_PATH;
 extern const std::string SFX_PATH;
-
-extern const std::string DEFAULT_PATH;
 
 // vita2d context
 extern SceGxmContext* _vita2d_context;
