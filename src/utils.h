@@ -2,24 +2,35 @@
 
 #include "Vector2f.h"
 #include <vector>
+#include "Colors.h"
 
 	float GetTimeNow();
 	int GetRandomInteger(int min, int max);
 	float GetRandomFloat(float min, float max);
 
 #pragma region DrawFunctionality	
-	void DrawLine(float x1, float y1, float x2, float y2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
-	void DrawLine(const Point2f& p1, const Point2f& p2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
-	void DrawLine(const Point2& p1, const Point2& p2, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
-	void DrawLine(const Linef& line, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
+	void DrawLine(float x1, float y1, float x2, float y2, float lineWidth, const Color4& color);
+	void DrawLine(float x1, float y1, float x2, float y2, float lineWidth = 1.0f, const Color3& color = C3_WHITE, int transparency = 255);
 
-	void DrawRect(const Rectf& rect, const Color4& color = Color4{ 255, 255, 255, 255 }, float lineWidth = 1.0f);
-	void FillRect(const Rectf& rect, const Color4& color = Color4{ 255, 255, 255, 255 });
+	void DrawLine(const Point2f& p1, const Point2f& p2, float lineWidth, const Color4& color);
+	void DrawLine(const Point2f& p1, const Point2f& p2, float lineWidth = 1.f, const Color3& color = C3_WHITE, int transparency = 255);
 
-	void FillCircle(float centerX, float centerY, float rad, const Color4& color = Color4{ 255, 255, 255, 255 });
-	void FillCircle(const Circlef& circle, const Color4& color = Color4{ 255, 255, 255, 255 });
-	void FillCircle(const Point2f& center, float rad, const Color4& color = Color4{ 255, 255, 255, 255 });
-#pragma endregion OpenGLDrawFunctionality
+	void DrawLine(const Linef& line, float lineWidth, const Color4& color);
+	void DrawLine(const Linef& line, float lineWidth = 1.0f, const Color3& color = C3_WHITE, int transparency = 255);
+
+	void DrawRect(const Rectf& rect, float lineWidth, const Color4& color);
+	void DrawRect(const Rectf& rect, float lineWidth = 1.0f, const Color3& color = C3_WHITE, int transparency = 255);
+
+	void FillRect(const Rectf& rect, const Color4& color);
+	void FillRect(const Rectf& rect, const Color3& color = C3_WHITE, int transparency = 255);
+
+	void FillCircle(float centerX, float centerY, float rad, const Color4& color);
+	void FillCircle(float centerX, float centerY, float rad, const Color3& color = C3_WHITE, int transparency = 255);
+	void FillCircle(const Circlef& circle, const Color4& color);
+	void FillCircle(const Circlef& circle, const Color3& color = C3_WHITE, int transparency = 255);
+	void FillCircle(const Point2f& center, float rad, const Color4& color);
+	void FillCircle(const Point2f& center, float rad, const Color3& color = C3_WHITE, int transparency = 255);
+#pragma endregion DrawFunctionality
 
 #pragma region CollisionFunctionality
 	struct HitInfo
@@ -32,7 +43,6 @@
 	bool IsPointInRect(const Point2f& p, const Rectf& r);
 
 	bool IsPointInCircle(const Point2f& p, const Circlef& c);
-	bool IsPointInCircle(const Point2& p, const Circlef& c);
 
 	bool IsPointInPolygon( const Point2f& p, const std::vector<Point2f>& vertices );
 	bool IsPointInPolygon( const Point2f& p, const Point2f* vertices, size_t nrVertices );
@@ -73,3 +83,5 @@
 	Circlef GetTransformedCircle(const Point2f& center, float rad);
 	Circlef GetTransformedCircle(const Circlef& circle);
 #pragma endregion Transformation
+
+	std::vector<std::string> Split(const std::string& s, const std::string& delimits = " \t");
