@@ -13,6 +13,19 @@ Point2f::Point2f( float x, float y )
 }
 
 //-----------------------------------------------------------------
+// Point2 Constructors
+//-----------------------------------------------------------------
+Point2::Point2()
+	:Point2{ 0, 0 }
+{
+}
+Point2::Point2(int x, int y)
+	: x{ x }, y{ y }
+{
+}
+
+
+//-----------------------------------------------------------------
 // Scale2f Constructors
 //-----------------------------------------------------------------
 Scale2f::Scale2f()
@@ -40,6 +53,14 @@ Rectf::Rectf( float left, float bottom, float width, float height )
 {
 }
 
+Rectf::Rectf(Point2 pos, float width, float height)
+	: left{ float(pos.x) }
+	, bottom{ float(pos.y) }
+	, width{ width }
+	, height{ height }
+{
+}
+
 Rectf::Rectf(Point2f pos, float width, float height)
 	:left{ pos.x }
 	, bottom{ pos.y }
@@ -49,30 +70,10 @@ Rectf::Rectf(Point2f pos, float width, float height)
 }
 
 //-----------------------------------------------------------------
-// Color Constructors
-//-----------------------------------------------------------------
-Color3::Color3()
-	: Color3{ 0, 0, 0 }
-{
-}
-
-Color3::Color3(int r, int g, int b)
-	: r{ r }
-	, g{ g }
-	, b{ b }
-{
-}
-
-//-----------------------------------------------------------------
 // Color4 Constructors
 //-----------------------------------------------------------------
 Color4::Color4()
 	:Color4{ 0, 0, 0, 0 }
-{
-}
-
-Color4::Color4(const Color3& color, int a)
-	: Color4{ color.r, color.g, color.b, a }
 {
 }
 

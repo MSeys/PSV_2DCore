@@ -22,12 +22,12 @@ float GetRandomFloat(float min, float max)
 }
 
 #pragma region DrawFunctionality
-void DrawLine(float x1, float y1, float x2, float y2, float lineWidth, const Color4& color)
+void DrawLine(float x1, float y1, float x2, float y2, const Color4& color, float lineWidth)
 {
-	DrawLine(Point2f{ x1, y1 }, Point2f{ x2, y2 }, lineWidth, color);
+	DrawLine(Point2f{ x1, y1 }, Point2f{ x2, y2 }, color, lineWidth);
 }
 
-void DrawLine(const Point2f& p1, const Point2f& p2, float lineWidth, const Color4& color)
+void DrawLine(const Point2f& p1, const Point2f& p2, const Color4& color, float lineWidth)
 {
 	const Point2f trueP1{ (PSV_Allowed ? GetTransformedPoint(p1) : p1) };
 	const Point2f trueP2{ (PSV_Allowed ? GetTransformedPoint(p2) : p2) };
@@ -43,12 +43,17 @@ void DrawLine(const Point2f& p1, const Point2f& p2, float lineWidth, const Color
 	vita2d_draw_line(trueP1.x, trueP1.y, trueP2.x, trueP2.y, RGBA8(color.r, color.g, color.b, color.a));
 }
 
-void DrawLine(const Linef& line, float lineWidth, const Color4& color)
+void DrawLine(const Point2& p1, const Point2& p2, const Color4& color, float lineWidth)
 {
-	DrawLine(line.p1, line.p2, lineWidth, color);
+	DrawLine(float(p1.x), float(p1.y), float(p2.x), float(p2.y), color, lineWidth);
 }
 
-void DrawRect(const Rectf& rect, float lineWidth, const Color4& color)
+void DrawLine(const Linef& line, const Color4& color, float lineWidth)
+{
+	DrawLine(line.p1, line.p2, color, lineWidth);
+}
+
+void DrawRect(const Rectf& rect, const Color4& color, float lineWidth)
 {
 	Point2f bottomLeft { rect.left, rect.bottom },
 				topLeft { rect.left, rect.bottom + rect.height },
@@ -64,10 +69,10 @@ void DrawRect(const Rectf& rect, float lineWidth, const Color4& color)
 		topRight = GetTransformedPoint(topRight);
 	}
 	
-	DrawLine(bottomLeft, topLeft, lineWidth, color);
-	DrawLine(topLeft, topRight, lineWidth, color);
-	DrawLine(topRight, bottomRight, lineWidth, color);
-	DrawLine(bottomRight, bottomLeft, lineWidth, color);
+	DrawLine(bottomLeft, topLeft, color, lineWidth);
+	DrawLine(topLeft, topRight, color, lineWidth);
+	DrawLine(topRight, bottomRight, color, lineWidth);
+	DrawLine(bottomRight, bottomLeft, color, lineWidth);
 }
 
 void FillRect(const Rectf& rect, const Color4& color)
@@ -103,46 +108,6 @@ void FillCircle(const Point2f& center, float rad, const Color4& color)
 {
 	FillCircle(center.x, center.y, rad, color);
 }
-
-void DrawLine(float x1, float y1, float x2, float y2, float lineWidth, const Color3& color, int transparency)
-{
-	DrawLine(x1, y1, x2, y2, lineWidth, Color4{ color, transparency });
-}
-
-void DrawLine(const Point2f& p1, const Point2f& p2, float lineWidth, const Color3& color, int transparency)
-{
-	DrawLine(p1, p2, lineWidth, Color4{ color, transparency });
-}
-
-void DrawLine(const Linef& line, float lineWidth, const Color3& color, int transparency)
-{
-	DrawLine(line, lineWidth, Color4{ color, transparency });
-}
-
-void DrawRect(const Rectf& rect, float lineWidth, const Color3& color, int transparency)
-{
-	DrawRect(rect, lineWidth, Color4{ color, transparency });
-}
-
-void FillRect(const Rectf& rect, const Color3& color, int transparency)
-{
-	FillRect(rect, Color4{ color, transparency });
-}
-
-void FillCircle(float centerX, float centerY, float rad, const Color3& color, int transparency)
-{
-	FillCircle(centerX, centerY, rad, Color4{ color, transparency });
-}
-
-void FillCircle(const Circlef& circle, const Color3& color, int transparency)
-{
-	FillCircle(circle, Color4{ color, transparency });
-}
-
-void FillCircle(const Point2f& center, float rad, const Color3& color, int transparency)
-{
-	FillCircle(center, rad, Color4{ color, transparency });
-}
 #pragma endregion OpenGLDrawFunctionality
 
 #pragma region CollisionFunctionality
@@ -154,6 +119,13 @@ bool IsPointInRect(const Point2f& p, const Rectf& r)
 bool IsPointInCircle(const Point2f& p, const Circlef& c)
 {
 	float squaredDist = (p.x - c.center.x) * (p.x - c.center.x) + (p.y - c.center.y) * ( p.y - c.center.y );
+	float squaredRadius = c.radius * c.radius;
+	return (squaredRadius >= squaredDist);
+}
+
+bool IsPointInCircle(const Point2& p, const Circlef& c)
+{
+	float squaredDist = (p.x - c.center.x) * (p.x - c.center.x) + (p.y - c.center.y) * (p.y - c.center.y);
 	float squaredRadius = c.radius * c.radius;
 	return (squaredRadius >= squaredDist);
 }
@@ -547,24 +519,3 @@ Circlef GetTransformedCircle(const Circlef& circle)
 	return GetTransformedCircle(circle.center, circle.radius);
 }
 #pragma endregion Transformation
-
-std::vector<std::string> Split(const std::string& s, const std::string& delimits)
-{
-	std::vector<std::string> tmp;
-	size_t p1, p2 = 0;
-	for (; ; ) // loop forever ... until break
-	{
-		p1 = s.find_first_not_of(delimits, p2); // Note: p2 is 0 on first loop
-		if (std::string::npos == p1)
-			break; // i.e. if empty or all delimits
-		p2 = s.find_first_of(delimits, p1 + 1);
-		if (std::string::npos != p2) // i.e. if still more ... p2 is not past end
-			tmp.push_back(s.substr(p1, p2 - p1));
-		else
-		{
-			tmp.push_back(s.substr(p1));
-			break;
-		}
-	}
-	return tmp;
-}

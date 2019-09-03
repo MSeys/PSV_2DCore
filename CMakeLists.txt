@@ -15,7 +15,7 @@ endif()
 
 ## Define project parameters here
 # Name of the project
-project(PSV2DCore)
+project(PSV2DCORE)
 # This line adds Vita helper macros, must go after project definition in order
 # to build Vita specific artifacts (self/vpk).
 include("${VITASDK}/share/vita.cmake" REQUIRED)
@@ -27,7 +27,7 @@ set(VITA_APP_NAME "PSV 2DCore")
 # unique string of developer and Y = a unique number for this app
 set(VITA_TITLEID  "PSVC00000")
 # Optional version string to show in LiveArea's more info screen
-set(VITA_VERSION  "01.11")
+set(VITA_VERSION  "00.70")
 
 ## Flags and includes for building
 # Note that we make sure not to overwrite previous flags
@@ -59,8 +59,6 @@ add_executable(${PROJECT_NAME}
   src/structs.h
   src/utils.cpp
   src/utils.h
-  src/Colors.cpp
-  src/Colors.h
   src/PSV_Core.cpp
   src/PSV_Core.h
   src/PSV_Utils.cpp
