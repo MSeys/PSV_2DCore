@@ -129,12 +129,11 @@ No! You can create your own class, copy the necessary functions from GameHandler
 ## Wiki
 A wiki will be in the works soon that should include better information than this README and should be more clear.
 
-## Samples - WIP (almost finished!)
-The samples will be found in their dedicated github repository. 
-These will include their GameHandler files and then specific classes for their sample.
-This will require EVERY sample to work however as you will be able to test them all with compiling just once!
-
+## Samples
+Samples can be found here:
 [Samples](https://github.com/MSeys/PSV_2DCore_samples)
+
+Good luck!
 
 ## Extra Libraries besides vitasdk
 * Vita2d
