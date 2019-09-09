@@ -1,5 +1,5 @@
 # PSV_2DCore
-### **Version 1.12 (Released September 3rd - 2019)**
+### **Version 1.13 (Released September 9th - 2019)**
 
 ## Functionality
 ### PSV
