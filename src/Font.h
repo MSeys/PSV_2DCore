@@ -11,7 +11,7 @@ enum TextLocation
 
 class Font
 {
-	vita2d_font* m_pVitaFont;
+	std::vector<vita2d_font*> m_pVitaFonts;
 
 public:
 	Font(const std::string& fileName);

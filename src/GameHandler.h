@@ -32,4 +32,3 @@ private:
 	void Initialize();
 	void Cleanup();
 };
-

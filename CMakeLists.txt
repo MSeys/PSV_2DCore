@@ -81,6 +81,12 @@ add_executable(${PROJECT_NAME}
   src/Keyboard.h
   src/Core.cpp
   src/Core.h
+
+  src/PosMotion.cpp
+  src/PosMotion.h
+  src/Transition.cpp
+  src/Transition.h
+
   src/GameHandler.cpp
   src/GameHandler.h
 )

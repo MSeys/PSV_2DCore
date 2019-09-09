@@ -19,7 +19,6 @@ Bank::Bank()
 
 void Bank::InitializeBanks()
 {
-	sceIoMkdir("ux0:/data/PSV_2DCore_Data", 0777);
 	InitializeAssetsMap(ASSETS_PATH);
 	InitializeUIMap(UI_PATH);
 	InitializeIconsMap(ICONS_PATH);

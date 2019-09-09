@@ -17,14 +17,22 @@ struct TextIcon
 };
 
 Font::Font(const std::string& fileName)
-	  : m_pVitaFont(vita2d_load_font_file(fileName.c_str()))
 {
+	for(int i{ 0 }; i <= 100; i++)
+	{
+		m_pVitaFonts.push_back(vita2d_load_font_file(fileName.c_str()));
+	}
 }
 
 Font::~Font()
 {
-	vita2d_free_font(m_pVitaFont);
-	m_pVitaFont = nullptr;
+	for (vita2d_font* pFont : m_pVitaFonts)
+	{
+		vita2d_free_font(pFont);
+		pFont = nullptr;
+	}
+
+	m_pVitaFonts.clear();
 }
 
 void Font::Draw(const Point2f& pos, int size, const std::string& text, const TextLocation& location, const Color4& color) const
@@ -167,7 +175,7 @@ void Font::Draw(const Point2f& pos, int size, const std::string& text, const Tex
 		// is text
 		else
 		{
-			vita2d_font_draw_text(m_pVitaFont,
+			vita2d_font_draw_text(m_pVitaFonts[size],
 				int(transPos.x + textOffsetX), int(transPos.y + textOffsetY),
 				RGBA8(color.r, color.g, color.b, color.a),
 				size, splitText.c_str());
@@ -185,10 +193,10 @@ void Font::Draw(const Point2f& pos, int size, const std::string& text, const Tex
 
 int Font::GetWidth(const std::string& text, int textSize) const
 {
-	return vita2d_font_text_width(m_pVitaFont, textSize, text.c_str());
+	return vita2d_font_text_width(m_pVitaFonts[textSize], textSize, text.c_str());
 }
 
 int Font::GetHeight(const std::string& text, int textSize) const
 {
-	return vita2d_font_text_height(m_pVitaFont, textSize, text.c_str());
+	return vita2d_font_text_height(m_pVitaFonts[textSize], textSize, text.c_str());
 }

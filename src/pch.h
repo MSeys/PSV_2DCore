@@ -41,6 +41,8 @@ extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
 // Resource paths
+extern const std::string DATA_PATH;
+
 extern const std::string UI_PATH;
 extern const std::string ASSETS_PATH;
 extern const std::string ICONS_PATH;

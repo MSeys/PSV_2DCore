@@ -5,6 +5,8 @@ const int SCREEN_WIDTH = 960;
 const int SCREEN_HEIGHT = 544;
 
 // Resource paths
+const std::string DATA_PATH{ "ux0:/data/PSV2DCoreData" };
+
 const std::string UI_PATH{ "app0:/Resources/UI" };
 const std::string ASSETS_PATH{ "app0:/Resources/GameAssets" };
 const std::string ICONS_PATH{ "app0:/Resources/Icons" };
