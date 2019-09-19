@@ -3,7 +3,7 @@
 GameHandler::GameHandler()
 {
 	// Create data folder in ux0 using DATA_PATH located in pch.cpp
-	// sceIoMkdir(DATA_PATH, 0777);
+	// sceIoMkdir(DATA_PATH.c_str(), 0777);
 	Initialize();
 }
 
