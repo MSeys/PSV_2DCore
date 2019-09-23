@@ -148,4 +148,3 @@ Maybe send a small donation to let me know that you appreciate the work!
 
 # Questions or help needed?
 * Contact me on [Twitter](https://twitter.com/seys_matthias).
-* Join me on my [Discord](https://discord.gg/VSGaCaD)!
